@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MVVMNewsApp</string>
+    <string name="search">Search…</string>
+    <string name="article_image">Article Image</string>
 </resources>

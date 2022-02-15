@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.news.R
 import com.example.news.databinding.ActivityNewsBinding
 import com.example.news.ui.activities.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NewsActivity : BaseActivity(R.layout.activity_news) {
 
     private lateinit var binding: ActivityNewsBinding
@@ -16,7 +19,7 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
 
     override fun setup(savedInstanceState: Bundle?) {
         binding.apply {
-            navController = newsNavHostFragment.findNavController()
+            navController = (supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment).navController
             bottomNavigationView.setupWithNavController(navController)
         }
     }
