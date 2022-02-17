@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import com.example.news.R
 import com.example.news.databinding.FragmentBreakingNewsBinding
 import com.example.news.databinding.FragmentSavedNewsBinding
+import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
+import com.example.news.viewmodels.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,6 +17,9 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
     private var _binding: FragmentSavedNewsBinding? = null
     private val binding get() = _binding!!
+
+    override val viewModel: NewsViewModel
+        get() = (activity as NewsActivity).newsViewModel
 
     override fun setup(savedInstanceState: Bundle?) {
 

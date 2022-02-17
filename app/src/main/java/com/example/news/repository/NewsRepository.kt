@@ -1,16 +1,22 @@
 package com.example.news.repository
 
+import com.example.news.api.NewsApiService
 import com.example.news.data.ArticleDao
 import com.example.news.ui.model.Article
 import com.example.news.util.extencials.mapArticle
 import com.example.news.util.extencials.mapArticleRealm
+import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ArticleRepository @Inject constructor(private val dao: ArticleDao) {
+class NewsRepository @Inject constructor(
+    private val dao: ArticleDao,
+    private val api: NewsApiService,
+) {
 
-    suspend fun getAllArticles(): List<Article> = dao.getAllArticles().map { it.mapArticle() }
+    suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =
+        api.getBreakingNews(countryCode, pageNumber)
 
     suspend fun insertArticle(article: Article) {
         dao.insertArticle(article.mapArticleRealm())

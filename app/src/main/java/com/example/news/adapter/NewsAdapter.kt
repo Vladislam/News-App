@@ -1,13 +1,13 @@
 package com.example.news.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.news.ui.model.Article
 import com.example.news.databinding.ItemArticlePreviewBinding
+import com.example.news.ui.model.Article
 
 class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
     ListAdapter<Article, RecyclerView.ViewHolder>(DiffCallback()) {
@@ -51,7 +51,7 @@ class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
                 tvSource.text = source?.name
                 tvTitle.text = title
                 tvDescription.text = description
-                tvPublishedAt.text = publishedAt
+                tvPublishedAt.text = publishedAt.replace('T', ' ')
             }
         }
     }
