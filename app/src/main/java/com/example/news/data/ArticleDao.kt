@@ -1,48 +1,52 @@
 package com.example.news.data
 
 import com.example.news.data.model.ArticleRealm
-import com.example.news.ui.model.Article
+import com.vicpin.krealmextensions.delete
+import com.vicpin.krealmextensions.queryAllAsFlowable
+import com.vicpin.krealmextensions.save
+import io.reactivex.Flowable
 import io.realm.Realm
-import io.realm.kotlin.executeTransactionAwait
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ArticleDao @Inject constructor(
     private val realm: Realm,
 ) {
 
-    suspend fun insertArticle(article: ArticleRealm) {
-        realm.executeTransactionAwait(Dispatchers.IO) { transaction ->
-            transaction.insert(article)
-        }
+    suspend fun insertArticle(article: ArticleRealm) = withContext(Dispatchers.IO) {
+        article.save()
     }
 
-    suspend fun insertArticles(articles: List<ArticleRealm>){
-        realm.executeTransactionAwait(Dispatchers.IO) { transaction ->
-            transaction.copyToRealm(articles)
-        }
+
+    fun getAllArticles(): Flowable<List<ArticleRealm>> {
+        return queryAllAsFlowable()
     }
 
-    suspend fun getAllArticles(): List<ArticleRealm> {
-        val articles = mutableListOf<ArticleRealm>()
+    fun articleExists(article: ArticleRealm): Boolean {
+        val entries = realm.where(ArticleRealm::class.java)
+            .equalTo("id", article.id)
+            .or()
+            .equalTo("description", article.description)
+            .or()
+            .equalTo("publishedAt", article.publishedAt)
+            .or()
+            .equalTo("title", article.title)
+            .or()
+            .equalTo("url", article.url)
+            .findFirst()
 
-        realm.executeTransactionAwait(Dispatchers.IO) { transaction ->
-            articles.addAll(transaction
-                .where(ArticleRealm::class.java)
-                .findAll()
-            )
-        }
-        return articles
+        return entries != null
     }
 
-    suspend fun deleteArticle(article: Article) {
-        realm.executeTransactionAwait(Dispatchers.IO) { transaction ->
-            val dbArticle = transaction.where(ArticleRealm::class.java)
-                .equalTo("id", article.id)
-                .findFirst()
-
-            dbArticle?.source?.deleteFromRealm()
-            dbArticle?.deleteFromRealm()
+    suspend fun deleteArticle(article: ArticleRealm) = withContext(Dispatchers.IO) {
+        article.source?.delete {
+            equalTo("id", article.source?._id)
+        }
+        article.delete {
+            equalTo("id", article.id)
         }
     }
 }

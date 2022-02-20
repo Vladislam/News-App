@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">MVVMNewsApp</string>
-    <string name="search">Search…</string>
+    <string name="app_name">News</string>
+    <string name="search_dots">Search…</string>
+    <string name="search_news">Search for News</string>
     <string name="article_image">Article Image</string>
+    <string name="saved_news">Saved News</string>
+    <string name="breaking_news">Breaking News</string>
+    <string name="article_has_been_deleted">The article has been successfully deleted</string>
+    <string name="undo">Undo</string>
+    <string name="add_to_saved">Add to saved</string>
+    <string name="article_has_been_saved">Article has been successfully saved</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="search">Search</string>
+    <string name="saved">Saved</string>
 </resources>

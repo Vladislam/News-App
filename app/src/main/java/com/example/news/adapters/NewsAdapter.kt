@@ -1,4 +1,4 @@
-package com.example.news.adapter
+package com.example.news.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.news.R
 import com.example.news.databinding.ItemArticlePreviewBinding
 import com.example.news.ui.model.Article
 
@@ -47,11 +48,14 @@ class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
 
         fun bind(item: Article) = with(binding) {
             item.apply {
-                Glide.with(binding.root).load(urlToImage).into(ivArticleImage)
-                tvSource.text = source?.name
+                Glide.with(binding.root)
+                    .load(urlToImage)
+                    .placeholder(R.drawable.no_image_placeholder)
+                    .into(ivArticleImage)
+                tvSource.text = source?.name ?: ""
                 tvTitle.text = title
                 tvDescription.text = description
-                tvPublishedAt.text = publishedAt.replace('T', ' ')
+                tvPublishedAt.text = publishedAt.replace('T', ' ').substring(0, publishedAt.length - 1)
             }
         }
     }

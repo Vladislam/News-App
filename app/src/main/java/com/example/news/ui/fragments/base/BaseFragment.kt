@@ -14,7 +14,7 @@ abstract class BaseFragment(layout: Int) : Fragment(layout) {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return setupBinding(inflater, container)
     }

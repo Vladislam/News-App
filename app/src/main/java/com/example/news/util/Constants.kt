@@ -5,5 +5,6 @@ object Constants {
     const val BASE_URL = "https://newsapi.org"
 
     const val DB_NAME = "News.db"
-    const val DB_SCHEME_VERSION = 1L
+
+    const val SEARCH_NEWS_TIME_DELAY = 500L
 }

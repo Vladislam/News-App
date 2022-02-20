@@ -9,10 +9,9 @@ import org.bson.types.ObjectId
 @RealmClass
 open class ArticleRealm(
     @PrimaryKey
-    var id: String = ObjectId().toHexString(),
-    var author: String = "",
-    @Required
-    var content: String = "",
+    var id: String? = ObjectId().toHexString(),
+    var author: String? = "",
+    var content: String? = "",
     var description: String = "",
     var publishedAt: String = "",
     var source: SourceRealm? = null,

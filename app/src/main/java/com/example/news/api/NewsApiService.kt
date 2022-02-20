@@ -22,8 +22,6 @@ interface NewsApiService {
     suspend fun searchForNews(
         @Query("q")
         searchQuery: String,
-        @Query("country")
-        countryCode: String = "ua",
         @Query("page")
         pageNumber: Int = 1,
         @Query("apikey")
