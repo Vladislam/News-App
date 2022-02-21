@@ -12,17 +12,12 @@ import com.example.news.R
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extencials.showBottomNavigationBar
-import com.example.news.util.extencials.showSnackBarWithDismiss
+import com.example.news.util.extentions.showSnackBarWithDismiss
 import com.example.news.viewmodels.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ArticleFragment : BaseFragment(R.layout.fragment_article) {
-
-    companion object {
-        private const val IS_FAVORITE_STATE_KEY = "isFavorite"
-    }
 
     private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding!!
@@ -33,7 +28,8 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
         get() = (activity as NewsActivity).newsViewModel
 
     override fun setup(savedInstanceState: Bundle?) {
-        showBottomNavigationBar()
+        (requireActivity() as NewsActivity).slideUpBottomNavigationBar()
+
         val argArticle = args.currentArticle
 
         (requireActivity() as NewsActivity).onBackPressedDispatcher.addCallback(this) {

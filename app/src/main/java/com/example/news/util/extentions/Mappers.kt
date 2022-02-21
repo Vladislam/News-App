@@ -1,4 +1,4 @@
-package com.example.news.util.extencials
+package com.example.news.util.extentions
 
 import com.example.news.data.model.ArticleRealm
 import com.example.news.data.model.SourceRealm

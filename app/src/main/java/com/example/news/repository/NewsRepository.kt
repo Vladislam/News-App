@@ -3,8 +3,8 @@ package com.example.news.repository
 import com.example.news.api.NewsApiService
 import com.example.news.data.ArticleDao
 import com.example.news.ui.model.Article
-import com.example.news.util.extencials.mapArticle
-import com.example.news.util.extencials.mapArticleRealm
+import com.example.news.util.extentions.mapArticle
+import com.example.news.util.extentions.mapArticleRealm
 import io.reactivex.Flowable
 import javax.inject.Inject
 import javax.inject.Singleton

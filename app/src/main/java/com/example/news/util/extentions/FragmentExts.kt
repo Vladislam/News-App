@@ -1,4 +1,4 @@
-package com.example.news.util.extencials
+package com.example.news.util.extentions
 
 import androidx.fragment.app.Fragment
 import com.example.news.R
@@ -14,13 +14,3 @@ fun Fragment.showSnackBarWithDismiss(string: Int) =
             }
         }
     }.show()
-
-fun Fragment.hideBottomNavigationBar() {
-    if (requireActivity() is NewsActivity)
-        (requireActivity() as NewsActivity).hideBottomNavigationBar()
-}
-
-fun Fragment.showBottomNavigationBar() {
-    if (requireActivity() is NewsActivity)
-        (requireActivity() as NewsActivity).showBottomNavigationBar()
-}

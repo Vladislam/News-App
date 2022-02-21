@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.news.repository.NewsRepository
 import com.example.news.ui.model.Article
 import com.example.news.ui.model.NewsResponse
+import com.example.news.util.Constants.QUERY_LANGUAGE
 import com.example.news.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -22,29 +24,33 @@ class NewsViewModel @Inject constructor(
     var breakingNewsPage = 1
     private var breakingNewsResponse: NewsResponse? = null
 
-    private val _searchNewsState = MutableSharedFlow<Resource<NewsResponse>>()
-    val searchNewsState get() = _searchNewsState.asSharedFlow()
+    private val _searchNewsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+    val searchNewsState get() = _searchNewsState.asStateFlow()
     var searchNewsPage = 1
     private var searchNewsResponse: NewsResponse? = null
 
     init {
-        getBreakingNews("ru")
+        getBreakingNews(QUERY_LANGUAGE)
     }
 
-    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        _breakingNewsState.emit(Resource.Loading())
-        val response = repos.getBreakingNews(countryCode, breakingNewsPage)
-        _breakingNewsState.emit(handleBreakingNewsResponse(response))
+    fun getBreakingNews(countryCode: String) {
+        viewModelScope.launch {
+            _breakingNewsState.emit(Resource.Loading())
+            val response = repos.getBreakingNews(countryCode, breakingNewsPage)
+            _breakingNewsState.emit(handleBreakingNewsResponse(response))
+        }
     }
 
-    fun searchNews(searchQuery: String) = viewModelScope.launch {
-        _searchNewsState.emit(Resource.Loading())
+    fun searchNews(searchQuery: String) {
+        viewModelScope.launch {
+            _searchNewsState.emit(Resource.Loading())
 
-        searchNewsPage = 1
-        searchNewsResponse = null
+            searchNewsPage = 1
+            searchNewsResponse = null
 
-        val response = repos.searchNews(searchQuery, searchNewsPage)
-        _searchNewsState.emit(handleSearchNewsResponse(response))
+            val response = repos.searchNews(searchQuery, searchNewsPage)
+            _searchNewsState.emit(handleSearchNewsResponse(response))
+        }
     }
 
     fun pagingSearchNews(searchQuery: String) = viewModelScope.launch {

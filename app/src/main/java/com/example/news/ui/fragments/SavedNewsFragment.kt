@@ -13,8 +13,6 @@ import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSavedNewsBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extencials.hideBottomNavigationBar
-import com.example.news.util.extencials.showBottomNavigationBar
 import com.example.news.viewmodels.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,14 +84,6 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
                 adapter = savedNewsAdapter
                 layoutManager = LinearLayoutManager(activity)
-                addOnScrollListener (object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-
-                        if(dy > 5) hideBottomNavigationBar()
-                        else if (dy < -5 || (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() < 1) showBottomNavigationBar()
-                    }
-                })
             }
         }
     }
