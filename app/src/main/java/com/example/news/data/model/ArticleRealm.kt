@@ -15,7 +15,6 @@ open class ArticleRealm(
     var description: String = "",
     var publishedAt: String = "",
     var source: SourceRealm? = null,
-    @Required
     var title: String = "",
     var url: String = "",
     var urlToImage: String = "",

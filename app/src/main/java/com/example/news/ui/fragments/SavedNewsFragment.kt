@@ -14,7 +14,6 @@ import com.example.news.databinding.FragmentSavedNewsBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.util.extencials.hideBottomNavigationBar
-import com.example.news.util.extencials.mapArticle
 import com.example.news.util.extencials.showBottomNavigationBar
 import com.example.news.viewmodels.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -53,8 +52,7 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
             val action =
                 SavedNewsFragmentDirections.actionSavedNewsFragment2ToArticleFragment4(
                     article,
-                    article.title,
-                    viewModel.isArticleFavorite(article))
+                    article.title)
             findNavController().navigate(action)
         }
 

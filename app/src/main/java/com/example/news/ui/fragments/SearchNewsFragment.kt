@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSearchNewsBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
+import com.example.news.util.Constants
 import com.example.news.util.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.Resource
 import com.example.news.util.extencials.hideBottomNavigationBar
@@ -65,8 +67,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
             val action =
                 SearchNewsFragmentDirections.actionSearchNewsFragment2ToArticleFragment3(
                     article,
-                    article.title,
-                    viewModel.isArticleFavorite(article))
+                    article.title)
             findNavController().navigate(action)
         }
 
@@ -74,14 +75,57 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
             recyclerViewSearchNews.apply {
                 adapter = searchNewsAdapter
                 layoutManager = LinearLayoutManager(activity)
-                addOnScrollListener (object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
+                addOnScrollListener (this@SearchNewsFragment.scrollListener)
+            }
+        }
+    }
 
-                        if(dy > 5) hideBottomNavigationBar()
-                        else if (dy < -5 || (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() < 1) showBottomNavigationBar()
-                    }
-                })
+    private fun hideProgressBar() {
+        binding.paginationProgressBar.visibility = View.GONE
+        isLoading = false
+    }
+
+    private fun showProgressBar() {
+        binding.paginationProgressBar.visibility = View.VISIBLE
+        isLoading = true
+    }
+
+    private var isLoading = false
+    private var isLastPage = false
+    private var isScrolling = false
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
+            val shouldPaginate =
+                isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+
+            if (dy >= 5) {
+                hideBottomNavigationBar()
+            } else if (dy < -5 || firstVisibleItemPosition < 1) {
+                showBottomNavigationBar()
+            }
+
+            if (shouldPaginate){
+                viewModel.pagingSearchNews(binding.editTextSearch.text.toString())
+                isScrolling = false
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
             }
         }
     }
@@ -97,6 +141,9 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
                         hideProgressBar()
                         response.data?.let { newsResponse ->
                             searchNewsAdapter.submitList(newsResponse.articles)
+
+                            val totalPages = newsResponse.totalResults / Constants.QUERY_PAGE_SIZE + 2
+                            isLastPage = viewModel.searchNewsPage == totalPages
                         }
                     }
                     is Resource.Error -> {
@@ -108,14 +155,6 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
                 }
             }
         }
-    }
-
-    private fun hideProgressBar() {
-        binding.paginationProgressBar.visibility = View.GONE
-    }
-
-    private fun showProgressBar() {
-        binding.paginationProgressBar.visibility = View.VISIBLE
     }
 
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {

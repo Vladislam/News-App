@@ -41,7 +41,7 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
         }
 
         binding.apply {
-            isFavorite = args.isFavorite
+            isFavorite = viewModel.isArticleSaved(argArticle)
 
             webView.apply {
                 webViewClient = WebViewClient()
@@ -72,18 +72,6 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = FragmentArticleBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.let {
-            binding.isFavorite = savedInstanceState.getBoolean(IS_FAVORITE_STATE_KEY)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(IS_FAVORITE_STATE_KEY, binding.isFavorite ?: args.isFavorite)
-        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
