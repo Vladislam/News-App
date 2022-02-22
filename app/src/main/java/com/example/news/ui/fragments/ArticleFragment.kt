@@ -6,14 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.news.R
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extentions.showSnackBarWithDismiss
-import com.example.news.viewmodels.NewsViewModel
+import com.example.news.util.extensions.showSnackBarWithDismiss
+import com.example.news.viewmodels.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,42 +25,38 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
 
     private val args: ArticleFragmentArgs by navArgs()
 
-    override val viewModel: NewsViewModel
-        get() = (activity as NewsActivity).newsViewModel
+    private val viewModel: ArticleViewModel by viewModels()
 
     override fun setup(savedInstanceState: Bundle?) {
         (requireActivity() as NewsActivity).slideUpBottomNavigationBar()
 
         val argArticle = args.currentArticle
 
+        binding.isFavorite = viewModel.isArticleSaved(argArticle)
+
+
         (requireActivity() as NewsActivity).onBackPressedDispatcher.addCallback(this) {
             findNavController().popBackStack()
         }
 
         binding.apply {
-            isFavorite = viewModel.isArticleSaved(argArticle)
 
             webView.apply {
                 webViewClient = WebViewClient()
                 loadUrl(argArticle.url)
             }
 
-            fabAddToFav.apply {
+            fabFav.apply {
                 setOnClickListener {
-                    viewModel.saveArticle(argArticle)
-
-                    isFavorite = true
-
-                    showSnackBarWithDismiss(R.string.article_has_been_saved)
-                }
-            }
-            fabDeleteFromFav.apply {
-                setOnClickListener {
-                    viewModel.deleteArticle(argArticle)
-
-                    isFavorite = false
-
-                    showSnackBarWithDismiss(R.string.article_has_been_deleted)
+                    isFavorite = if (isFavorite == true) {
+                        viewModel.deleteArticle(argArticle)
+                        showSnackBarWithDismiss(R.string.article_has_been_deleted)
+                        false
+                    } else {
+                        viewModel.saveArticle(argArticle)
+                        showSnackBarWithDismiss(R.string.article_has_been_saved)
+                        true
+                    }
                 }
             }
         }

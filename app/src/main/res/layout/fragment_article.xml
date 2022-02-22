@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.fragments.ArticleFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
         <variable
             name="isFavorite"
             type="Boolean" />
@@ -13,7 +12,8 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.ArticleFragment">
 
         <WebView
             android:id="@+id/webView"
@@ -21,30 +21,16 @@
             android:layout_height="match_parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddToFav"
+            android:id="@+id/fabFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
-            android:src="@drawable/ic_favorite_outlined"
-            android:visibility="@{isFavorite ? View.GONE : View.VISIBLE}"
-            app:tint="#E0133D"
+            android:contentDescription="@string/add_to_saved"
+            android:src="@{isFavorite ? @drawable/ic_favorite_filled : @drawable/ic_favorite_outlined}"
             app:fabSize="normal"
-            android:contentDescription="@string/add_to_saved" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabDeleteFromFav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:src="@drawable/ic_favorite_filled"
-            android:visibility="@{isFavorite ? View.VISIBLE : View.GONE}"
-            app:tint="#E0133D"
-            app:fabSize="normal"
-            android:contentDescription="@string/add_to_saved" />
+            app:tint="#E0133D" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

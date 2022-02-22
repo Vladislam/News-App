@@ -3,9 +3,7 @@ package com.example.news.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.repository.NewsRepository
-import com.example.news.ui.model.Article
 import com.example.news.ui.model.NewsResponse
-import com.example.news.util.Constants.QUERY_LANGUAGE
 import com.example.news.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,31 +13,14 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val repos: NewsRepository,
 ) : ViewModel() {
-
-    private val _breakingNewsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
-    val breakingNewsState get() = _breakingNewsState.asStateFlow()
-    var breakingNewsPage = 1
-    private var breakingNewsResponse: NewsResponse? = null
 
     private val _searchNewsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
     val searchNewsState get() = _searchNewsState.asStateFlow()
     var searchNewsPage = 1
     private var searchNewsResponse: NewsResponse? = null
-
-    init {
-        getBreakingNews(QUERY_LANGUAGE)
-    }
-
-    fun getBreakingNews(countryCode: String) {
-        viewModelScope.launch {
-            _breakingNewsState.emit(Resource.Loading())
-            val response = repos.getBreakingNews(countryCode, breakingNewsPage)
-            _breakingNewsState.emit(handleBreakingNewsResponse(response))
-        }
-    }
 
     fun searchNews(searchQuery: String) {
         viewModelScope.launch {
@@ -60,22 +41,6 @@ class NewsViewModel @Inject constructor(
 
         val response = repos.searchNews(searchQuery, searchNewsPage)
         _searchNewsState.emit(handlePagingSearchNewsResponse(response))
-    }
-
-    private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                breakingNewsPage++
-                if (breakingNewsResponse == null) {
-                    breakingNewsResponse = resultResponse
-                } else {
-                    breakingNewsResponse?.articles?.addAll(resultResponse.articles)
-                }
-
-                return Resource.Success(breakingNewsResponse ?: resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
     }
 
     private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
@@ -101,16 +66,4 @@ class NewsViewModel @Inject constructor(
         }
         return Resource.Error(response.message())
     }
-
-    fun saveArticle(article: Article) = viewModelScope.launch {
-        repos.insertArticle(article)
-    }
-
-    fun deleteArticle(article: Article) = viewModelScope.launch {
-        repos.deleteArticle(article)
-    }
-
-    fun getSavedNews() = repos.getSavedNews()
-
-    fun isArticleSaved(article: Article) = repos.isArticleSaved(article)
 }

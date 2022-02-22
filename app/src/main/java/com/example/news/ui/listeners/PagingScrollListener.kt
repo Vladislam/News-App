@@ -33,10 +33,10 @@ class PagingScrollListener(
         if (shouldPaginate) {
             pagingAction.invoke(when (arg) {
                 is String -> {
-                    arg
+                    arg.ifEmpty { return }
                 }
                 is EditText -> {
-                    arg.text.toString()
+                    arg.text.toString().ifEmpty { return }
                 }
                 else -> {
                     return

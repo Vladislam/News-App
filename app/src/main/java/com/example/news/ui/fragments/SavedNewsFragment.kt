@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,12 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.news.R
 import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSavedNewsBinding
-import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.viewmodels.NewsViewModel
+import com.example.news.util.extensions.mapArticle
+import com.example.news.viewmodels.SavedViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.internal.disposables.ListCompositeDisposable
 
 @AndroidEntryPoint
 class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
@@ -24,15 +24,11 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
     private var _binding: FragmentSavedNewsBinding? = null
     private val binding get() = _binding!!
 
-    override val viewModel: NewsViewModel
-        get() = (activity as NewsActivity).newsViewModel
+    private val viewModel: SavedViewModel by viewModels()
 
     private lateinit var savedNewsAdapter: NewsAdapter
 
-    private var disposable: ListCompositeDisposable? = null
-
     override fun setup(savedInstanceState: Bundle?) {
-        disposable = ListCompositeDisposable()
         setupRecycler()
 
         setupViewModel()
@@ -40,9 +36,9 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
     private fun setupViewModel() {
         viewModel.getSavedNews()
-            .subscribe { articles ->
-                savedNewsAdapter.submitList(articles)
-            }.also { disposable?.add(disposable) }
+            .observe(this) { result ->
+                savedNewsAdapter.submitList(result.map { it.mapArticle() })
+            }
     }
 
     private fun setupRecycler() {
@@ -50,7 +46,8 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
             val action =
                 SavedNewsFragmentDirections.actionSavedNewsFragment2ToArticleFragment4(
                     article,
-                    article.title)
+                    article.title
+                )
             findNavController().navigate(action)
         }
 
@@ -59,7 +56,8 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
                 ItemTouchHelper(object :
                     ItemTouchHelper.SimpleCallback(
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                    ) {
                     override fun onMove(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -71,9 +69,11 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val article = savedNewsAdapter.currentList[viewHolder.adapterPosition]
                         viewModel.deleteArticle(article)
-                        Snackbar.make(requireView(),
+                        Snackbar.make(
+                            requireView(),
                             getString(R.string.article_has_been_deleted),
-                            Snackbar.LENGTH_LONG).apply {
+                            Snackbar.LENGTH_LONG
+                        ).apply {
                             setAction(getString(R.string.undo)) {
                                 viewModel.saveArticle(article)
                             }
@@ -95,7 +95,6 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
     override fun onDestroy() {
         super.onDestroy()
-        disposable?.dispose()
         _binding = null
     }
 }

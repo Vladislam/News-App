@@ -2,10 +2,10 @@ package com.example.news.repository
 
 import com.example.news.api.NewsApiService
 import com.example.news.data.ArticleDao
+import com.example.news.data.model.ArticleRealm
 import com.example.news.ui.model.Article
-import com.example.news.util.extentions.mapArticle
-import com.example.news.util.extentions.mapArticleRealm
-import io.reactivex.Flowable
+import com.example.news.util.RealmLiveData
+import com.example.news.util.extensions.mapArticleRealm
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +21,7 @@ class NewsRepository @Inject constructor(
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
         api.searchForNews(searchQuery, pageNumber)
 
-    suspend fun insertArticle(article: Article) {
+    fun insertArticle(article: Article) {
         dao.insertArticle(article.mapArticleRealm())
     }
 
@@ -29,11 +29,11 @@ class NewsRepository @Inject constructor(
         return dao.articleExists(article.mapArticleRealm())
     }
 
-    fun getSavedNews(): Flowable<List<Article>> {
-        return dao.getAllArticles().map { it.map { articleRealm -> articleRealm.mapArticle() } }
+    fun getSavedNews(): RealmLiveData<ArticleRealm> {
+        return dao.getAllArticles()
     }
 
-    suspend fun deleteArticle(article: Article) {
+    fun deleteArticle(article: Article) {
         dao.deleteArticle(article.mapArticleRealm())
     }
 }

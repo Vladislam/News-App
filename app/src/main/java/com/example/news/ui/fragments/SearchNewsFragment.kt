@@ -4,21 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.R
 import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSearchNewsBinding
-import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Constants
 import com.example.news.util.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.Resource
-import com.example.news.viewmodels.NewsViewModel
+import com.example.news.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,8 +38,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
 
     private lateinit var searchNewsAdapter: NewsAdapter
 
-    override val viewModel: NewsViewModel
-        get() = (activity as NewsActivity).newsViewModel
+    private val viewModel: SearchViewModel by viewModels()
 
     private lateinit var pagingScrollListener: PagingScrollListener
 
@@ -48,13 +48,19 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
         setupViewModel()
 
         var job: Job? = null
-        binding.editTextSearch.addTextChangedListener { editable ->
-            job?.cancel()
-            job = lifecycleScope.launch {
-                delay(SEARCH_NEWS_TIME_DELAY)
-                editable?.let {
-                    if (editable.toString().isNotEmpty()) {
-                        viewModel.searchNews(editable.toString())
+        binding.editTextSearch.apply {
+            tag = false
+            onFocusChangeListener = OnFocusChangeListener { _, _ ->
+                tag = true
+            }
+            addTextChangedListener { editable ->
+                job?.cancel()
+                job = lifecycleScope.launch {
+                    delay(SEARCH_NEWS_TIME_DELAY)
+                    editable?.let {
+                        if (editable.toString().isNotEmpty() && tag as Boolean) {
+                            viewModel.searchNews(editable.toString())
+                        }
                     }
                 }
             }
@@ -62,14 +68,17 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
     }
 
     private fun setupRecycler() {
-        pagingScrollListener = PagingScrollListener(viewModel::pagingSearchNews,
-            binding.editTextSearch)
+        pagingScrollListener = PagingScrollListener(
+            viewModel::pagingSearchNews,
+            binding.editTextSearch
+        )
 
         searchNewsAdapter = NewsAdapter { article ->
             val action =
                 SearchNewsFragmentDirections.actionSearchNewsFragment2ToArticleFragment3(
                     article,
-                    article.title)
+                    article.title
+                )
             findNavController().navigate(action)
         }
 
@@ -118,6 +127,10 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {

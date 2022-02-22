@@ -61,7 +61,7 @@ class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Article>() {
-        override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.uuid == newItem.uuid
 
         override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
     }

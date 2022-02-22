@@ -5,19 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.R
 import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentBreakingNewsBinding
-import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Constants.QUERY_LANGUAGE
 import com.example.news.util.Constants.QUERY_PAGE_SIZE
 import com.example.news.util.Resource
-import com.example.news.viewmodels.NewsViewModel
+import com.example.news.viewmodels.BreakingNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -32,8 +32,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     private var _binding: FragmentBreakingNewsBinding? = null
     private val binding get() = _binding!!
 
-    override val viewModel: NewsViewModel
-        get() = (activity as NewsActivity).newsViewModel
+    private val viewModel: BreakingNewsViewModel by viewModels()
 
     private lateinit var newsAdapter: NewsAdapter
 
@@ -52,7 +51,8 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
             val action =
                 BreakingNewsFragmentDirections.actionBreakingNewsFragment2ToArticleFragment2(
                     article,
-                    article.title)
+                    article.title
+                )
             findNavController().navigate(action)
         }
 
@@ -88,7 +88,8 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                             newsAdapter.submitList(newsResponse.articles)
 
                             val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
-                            pagingScrollListener.isLastPage = viewModel.breakingNewsPage == totalPages
+                            pagingScrollListener.isLastPage =
+                                viewModel.breakingNewsPage == totalPages
                         }
                     }
                     is Resource.Error -> {
