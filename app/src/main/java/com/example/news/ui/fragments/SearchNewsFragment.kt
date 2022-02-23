@@ -129,10 +129,6 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = FragmentSearchNewsBinding.inflate(inflater, container, false)
         return binding.root

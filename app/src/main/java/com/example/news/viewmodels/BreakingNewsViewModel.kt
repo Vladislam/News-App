@@ -3,7 +3,7 @@ package com.example.news.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.repository.NewsRepository
-import com.example.news.ui.model.NewsResponse
+import com.example.news.data.model.NewsResponse
 import com.example.news.util.Constants
 import com.example.news.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

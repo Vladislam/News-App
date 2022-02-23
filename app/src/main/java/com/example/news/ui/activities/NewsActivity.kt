@@ -3,6 +3,7 @@ package com.example.news.ui.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -29,7 +30,14 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
             ).build()
 
             toolbar.setupWithNavController(navController, appBarConfiguration)
-            bottomNavigationView.setupWithNavController(navController)
+            bottomNavigationView.apply {
+                setOnItemReselectedListener { menuItem ->
+                    val navOptions = NavOptions.Builder().setPopUpTo(menuItem.itemId, true).build()
+                    navController.navigate(menuItem.itemId, null, navOptions)
+                }
+
+                bottomNavigationView.setupWithNavController(navController)
+            }
         }
     }
 

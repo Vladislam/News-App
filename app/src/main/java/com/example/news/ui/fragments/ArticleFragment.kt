@@ -34,7 +34,6 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
 
         binding.isFavorite = viewModel.isArticleSaved(argArticle)
 
-
         (requireActivity() as NewsActivity).onBackPressedDispatcher.addCallback(this) {
             findNavController().popBackStack()
         }

@@ -20,7 +20,7 @@
         android:label="{title}">
         <argument
             android:name="currentArticle"
-            app:argType="com.example.news.ui.model.Article" />
+            app:argType="com.example.news.data.model.ArticleEntity" />
         <argument
             android:name="title"
             app:argType="string" />

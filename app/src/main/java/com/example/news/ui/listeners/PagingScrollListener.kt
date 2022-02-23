@@ -24,11 +24,11 @@ class PagingScrollListener(
         val totalItemCount = layoutManager.itemCount
 
         val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
-        val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+        val isLastItemToPaginate = firstVisibleItemPosition + visibleItemCount > totalItemCount - 3
         val isNotAtBeginning = firstVisibleItemPosition >= 0
         val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
         val shouldPaginate =
-            isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+            isNotLoadingAndNotLastPage && isLastItemToPaginate && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
 
         if (shouldPaginate) {
             pagingAction.invoke(when (arg) {

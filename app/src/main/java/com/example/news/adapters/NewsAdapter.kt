@@ -7,17 +7,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.news.R
+import com.example.news.data.model.ArticleEntity
 import com.example.news.databinding.ItemArticlePreviewBinding
-import com.example.news.ui.model.Article
 
-class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
-    ListAdapter<Article, RecyclerView.ViewHolder>(DiffCallback()) {
+class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null) :
+    ListAdapter<ArticleEntity, RecyclerView.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsViewHolder {
 
-        return NewsViewHolder(ItemArticlePreviewBinding.inflate(LayoutInflater.from(parent.context),
-            parent,
-            false))
+        return NewsViewHolder(
+            ItemArticlePreviewBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -46,7 +50,7 @@ class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
             }
         }
 
-        fun bind(item: Article) = with(binding) {
+        fun bind(item: ArticleEntity) = with(binding) {
             item.apply {
                 Glide.with(binding.root)
                     .load(urlToImage)
@@ -55,14 +59,17 @@ class NewsAdapter(private val listener: ((item: Article) -> Unit)? = null) :
                 tvSource.text = source?.name ?: ""
                 tvTitle.text = title
                 tvDescription.text = description
-                tvPublishedAt.text = publishedAt.replace('T', ' ').substring(0, publishedAt.length - 1)
+                tvPublishedAt.text =
+                    publishedAt.replace('T', ' ').substring(0, publishedAt.length - 1)
             }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<Article>() {
-        override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.uuid == newItem.uuid
+    class DiffCallback : DiffUtil.ItemCallback<ArticleEntity>() {
+        override fun areItemsTheSame(oldItem: ArticleEntity, newItem: ArticleEntity) =
+            oldItem.url == newItem.url
 
-        override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: ArticleEntity, newItem: ArticleEntity) =
+            oldItem == newItem
     }
 }

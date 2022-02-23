@@ -13,7 +13,7 @@ import com.example.news.R
 import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSavedNewsBinding
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extensions.mapArticle
+import com.example.news.util.extensions.copyEntity
 import com.example.news.viewmodels.SavedViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,8 +36,8 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
     private fun setupViewModel() {
         viewModel.getSavedNews()
-            .observe(this) { result ->
-                savedNewsAdapter.submitList(result.map { it.mapArticle() })
+            .observe(this) {
+                savedNewsAdapter.submitList(it.toList())
             }
     }
 
@@ -45,7 +45,7 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
         savedNewsAdapter = NewsAdapter { article ->
             val action =
                 SavedNewsFragmentDirections.actionSavedNewsFragment2ToArticleFragment4(
-                    article,
+                    article.copyEntity(),
                     article.title
                 )
             findNavController().navigate(action)
@@ -68,6 +68,7 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val article = savedNewsAdapter.currentList[viewHolder.adapterPosition]
+                        val articleCopy = article.copy()
                         viewModel.deleteArticle(article)
                         Snackbar.make(
                             requireView(),
@@ -75,7 +76,7 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
                             Snackbar.LENGTH_LONG
                         ).apply {
                             setAction(getString(R.string.undo)) {
-                                viewModel.saveArticle(article)
+                                viewModel.saveArticle(articleCopy)
                             }
                             show()
                         }
