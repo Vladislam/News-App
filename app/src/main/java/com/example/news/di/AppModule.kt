@@ -11,5 +11,5 @@ import io.realm.RealmConfiguration
 @InstallIn(SingletonComponent::class)
 class AppModule {
     @Provides
-    fun provideRealmInstance(): Realm = Realm.getDefaultInstance()
+    fun provideRealm(): Realm = Realm.getDefaultInstance()
 }

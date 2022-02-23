@@ -2,7 +2,7 @@
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
     app:startDestination="@+id/breaking_news_nav_graph">
 
-    <include app:graph="@navigation/breaking_nes_nav_graph" />
+    <include app:graph="@navigation/breaking_news_nav_graph" />
     <include app:graph="@navigation/search_nav_graph" />
     <include app:graph="@navigation/saved_nav_graph" />
 
