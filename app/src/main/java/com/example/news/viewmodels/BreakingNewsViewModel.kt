@@ -18,10 +18,11 @@ class BreakingNewsViewModel @Inject constructor(
     private val repos: NewsRepository,
 ) : ViewModel() {
 
-    private val _breakingNewsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+    private var breakingNewsResponse: NewsResponse? = null
+    private val _breakingNewsState =
+        MutableStateFlow<Resource<NewsResponse>>(Resource.Success(breakingNewsResponse))
     val breakingNewsState get() = _breakingNewsState.asStateFlow()
     var breakingNewsPage = 1
-    private var breakingNewsResponse: NewsResponse? = null
 
     init {
         getBreakingNews(Constants.QUERY_LANGUAGE)
@@ -30,20 +31,43 @@ class BreakingNewsViewModel @Inject constructor(
     fun getBreakingNews(countryCode: String) {
         viewModelScope.launch {
             _breakingNewsState.emit(Resource.Loading())
+
+            breakingNewsResponse = null
+            breakingNewsPage = 1
+
             val response = repos.getBreakingNews(countryCode, breakingNewsPage)
             _breakingNewsState.emit(handleBreakingNewsResponse(response))
         }
     }
 
+    fun pagingBreakingNews(searchQuery: String) = viewModelScope.launch {
+        _breakingNewsState.emit(Resource.Loading())
+
+        ++breakingNewsPage
+
+        val response = repos.searchNews(searchQuery, breakingNewsPage)
+        _breakingNewsState.emit(handlePagingBreakingNewsResponse(response))
+    }
+
     private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                breakingNewsPage++
                 if (breakingNewsResponse == null) {
                     breakingNewsResponse = resultResponse
                 } else {
                     breakingNewsResponse?.articles?.addAll(resultResponse.articles)
                 }
+
+                return Resource.Success(breakingNewsResponse ?: resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
+    }
+
+    private fun handlePagingBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                breakingNewsResponse?.articles?.addAll(resultResponse.articles)
 
                 return Resource.Success(breakingNewsResponse ?: resultResponse)
             }

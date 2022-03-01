@@ -1,6 +1,7 @@
 package com.example.news.util.extensions
 
 import androidx.fragment.app.Fragment
+import com.example.news.ui.activities.NewsActivity
 import com.google.android.material.snackbar.Snackbar
 
 inline fun Fragment.showSnackBarWithAction(
@@ -14,3 +15,5 @@ inline fun Fragment.showSnackBarWithAction(
             action()
         }
     }.show()
+
+fun Fragment.slideUpBottomNavigationBar() = (requireActivity() as NewsActivity).slideUpBottomNavigationBar()

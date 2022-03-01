@@ -15,6 +15,7 @@ import com.example.news.databinding.FragmentSavedNewsBinding
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.util.extensions.copyEntity
 import com.example.news.util.extensions.showSnackBarWithAction
+import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.SavedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +30,7 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
     private lateinit var savedNewsAdapter: NewsAdapter
 
     override fun setup(savedInstanceState: Bundle?) {
+        slideUpBottomNavigationBar()
         setupRecycler()
 
         setupViewModel()

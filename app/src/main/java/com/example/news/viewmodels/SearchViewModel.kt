@@ -2,8 +2,8 @@ package com.example.news.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.news.repository.NewsRepository
 import com.example.news.data.model.NewsResponse
+import com.example.news.repository.NewsRepository
 import com.example.news.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +17,11 @@ class SearchViewModel @Inject constructor(
     private val repos: NewsRepository,
 ) : ViewModel() {
 
-    private val _searchNewsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Success(null))
+    private var searchNewsResponse: NewsResponse? = null
+    private val _searchNewsState =
+        MutableStateFlow<Resource<NewsResponse>>(Resource.Success(searchNewsResponse))
     val searchNewsState get() = _searchNewsState.asStateFlow()
     var searchNewsPage = 1
-    private var searchNewsResponse: NewsResponse? = null
 
     fun searchNews(searchQuery: String) {
         viewModelScope.launch {

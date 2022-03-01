@@ -13,7 +13,7 @@ import com.example.news.R
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extensions.showSnackBarWithAction
+import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,39 +28,39 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
     private val viewModel: ArticleViewModel by viewModels()
 
     override fun setup(savedInstanceState: Bundle?) {
-        (requireActivity() as NewsActivity).slideUpBottomNavigationBar()
+        slideUpBottomNavigationBar()
 
+        setupViews()
+        setupBackButton()
+    }
+
+    private fun setupViews() = binding.apply {
         val argArticle = args.currentArticle
 
         binding.isFavorite = viewModel.isArticleSaved(argArticle)
 
-        (requireActivity() as NewsActivity).onBackPressedDispatcher.addCallback(this) {
-            findNavController().popBackStack()
+        webView.apply {
+            webViewClient = WebViewClient()
+            argArticle.url?.let { loadUrl(it) }
         }
 
-        binding.apply {
-
-            webView.apply {
-                webViewClient = WebViewClient()
-                argArticle.url?.let { loadUrl(it) }
-            }
-
-            fabFav.apply {
-                setOnClickListener {
-                    showSnackBarWithAction(if (isFavorite == true) {
-                        viewModel.deleteArticle(argArticle.url)
-                        R.string.article_has_been_deleted
-                    } else {
-                        viewModel.saveArticle(argArticle)
-                        R.string.article_has_been_saved
-                    }, R.string.dismiss) {
-                        dismiss()
-                    }
-                    isFavorite = isFavorite?.not()
+        fabFav.apply {
+            setOnClickListener {
+                isFavorite = if (isFavorite == true) {
+                    viewModel.deleteArticle(argArticle.url)
+                    false
+                } else {
+                    viewModel.saveArticle(argArticle)
+                    true
                 }
             }
         }
     }
+
+    private fun setupBackButton() =
+        (requireActivity() as NewsActivity).onBackPressedDispatcher.addCallback(this) {
+            findNavController().popBackStack()
+        }
 
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = FragmentArticleBinding.inflate(inflater, container, false)

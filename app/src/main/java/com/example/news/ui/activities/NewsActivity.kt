@@ -45,9 +45,10 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
 
     fun slideUpBottomNavigationBar() {
         binding.bottomNavigationView.apply {
-            ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior).slideUp(this)
+            ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior).slideUp(
+                this
+            )
         }
-//        binding.bottomNavigationView.translationY = 0f
     }
 
     override fun setupBinding(layout: Int): ViewGroup {

@@ -19,11 +19,11 @@ import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Constants
 import com.example.news.util.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.Resource
+import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -43,24 +43,34 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
     private lateinit var pagingScrollListener: PagingScrollListener
 
     override fun setup(savedInstanceState: Bundle?) {
+        slideUpBottomNavigationBar()
         setupRecycler()
-
+        setupEditText()
+        setupSwipeToRefresh()
         setupViewModel()
+    }
 
-        var job: Job? = null
-        binding.editTextSearch.apply {
-            tag = false
-            onFocusChangeListener = OnFocusChangeListener { _, _ ->
-                tag = true
+    private fun setupSwipeToRefresh() = binding.apply {
+        swipeToRefresh.setOnRefreshListener {
+            if (editTextSearch.text.isNotEmpty()) {
+                viewModel.searchNews(editTextSearch.text.toString())
             }
-            addTextChangedListener { editable ->
-                job?.cancel()
-                job = lifecycleScope.launch {
-                    delay(SEARCH_NEWS_TIME_DELAY)
-                    editable?.let {
-                        if (editable.toString().isNotEmpty() && tag as Boolean) {
-                            viewModel.searchNews(editable.toString())
-                        }
+        }
+    }
+
+    private fun setupEditText() = binding.editTextSearch.apply {
+        var job: Job? = null
+        tag = false
+        onFocusChangeListener = OnFocusChangeListener { _, _ ->
+            tag = true
+        }
+        addTextChangedListener { editable ->
+            job?.cancel()
+            job = lifecycleScope.launch {
+                delay(SEARCH_NEWS_TIME_DELAY)
+                editable?.let {
+                    if (editable.toString().isNotEmpty() && tag as Boolean) {
+                        viewModel.searchNews(editable.toString())
                     }
                 }
             }
@@ -106,10 +116,15 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
             viewModel.searchNewsState.collect { response ->
                 when (response) {
                     is Resource.Loading -> {
-                        showProgressBar()
+                        if (!binding.swipeToRefresh.isRefreshing)
+                            showProgressBar()
                     }
                     is Resource.Success -> {
-                        hideProgressBar()
+                        if (binding.swipeToRefresh.isRefreshing) {
+                            binding.swipeToRefresh.isRefreshing = false
+                        } else {
+                            hideProgressBar()
+                        }
                         response.data?.let { newsResponse ->
                             searchNewsAdapter.submitList(newsResponse.articles)
 

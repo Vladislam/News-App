@@ -19,7 +19,6 @@ import com.example.news.util.Constants.QUERY_PAGE_SIZE
 import com.example.news.util.Resource
 import com.example.news.viewmodels.BreakingNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -40,12 +39,21 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
 
     override fun setup(savedInstanceState: Bundle?) {
         setupRecycler()
+        setupSwipeToRefresh()
 
         setupViewModel()
     }
 
+    private fun setupSwipeToRefresh() {
+        binding.apply {
+            swipeToRefresh.setOnRefreshListener {
+                viewModel.getBreakingNews(QUERY_LANGUAGE)
+            }
+        }
+    }
+
     private fun setupRecycler() {
-        pagingScrollListener = PagingScrollListener(viewModel::getBreakingNews, QUERY_LANGUAGE)
+        pagingScrollListener = PagingScrollListener(viewModel::pagingBreakingNews, QUERY_LANGUAGE)
 
         newsAdapter = NewsAdapter { article ->
             val action =
@@ -76,14 +84,20 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     }
 
     private fun setupViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             viewModel.breakingNewsState.collect { response ->
                 when (response) {
                     is Resource.Loading -> {
-                        showProgressBar()
+                        if (!binding.swipeToRefresh.isRefreshing)
+                            showProgressBar()
                     }
                     is Resource.Success -> {
-                        hideProgressBar()
+                        if (binding.swipeToRefresh.isRefreshing) {
+                            binding.swipeToRefresh.isRefreshing = false
+                        } else {
+                            hideProgressBar()
+                        }
+
                         response.data?.let { newsResponse ->
                             newsAdapter.submitList(newsResponse.articles)
 
@@ -94,6 +108,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                     }
                     is Resource.Error -> {
                         hideProgressBar()
+                        binding.swipeToRefresh.isRefreshing = false
                         response.message?.let {
                             Log.e(TAG, "An error has occurred $it")
                         }
@@ -106,10 +121,5 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = FragmentBreakingNewsBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
