@@ -13,7 +13,7 @@ import com.example.news.R
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extensions.showSnackBarWithDismiss
+import com.example.news.util.extensions.showSnackBarWithAction
 import com.example.news.viewmodels.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,20 +42,21 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
 
             webView.apply {
                 webViewClient = WebViewClient()
-                loadUrl(argArticle.url)
+                argArticle.url?.let { loadUrl(it) }
             }
 
             fabFav.apply {
                 setOnClickListener {
-                    isFavorite = if (isFavorite == true) {
-                        viewModel.deleteArticle(argArticle)
-                        showSnackBarWithDismiss(R.string.article_has_been_deleted)
-                        false
+                    showSnackBarWithAction(if (isFavorite == true) {
+                        viewModel.deleteArticle(argArticle.url)
+                        R.string.article_has_been_deleted
                     } else {
                         viewModel.saveArticle(argArticle)
-                        showSnackBarWithDismiss(R.string.article_has_been_saved)
-                        true
+                        R.string.article_has_been_saved
+                    }, R.string.dismiss) {
+                        dismiss()
                     }
+                    isFavorite = isFavorite?.not()
                 }
             }
         }

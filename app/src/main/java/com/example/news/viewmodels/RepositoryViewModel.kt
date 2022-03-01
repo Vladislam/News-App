@@ -1,10 +1,8 @@
 package com.example.news.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.news.data.model.ArticleEntity
 import com.example.news.repository.NewsRepository
-import kotlinx.coroutines.launch
 
 open class RepositoryViewModel(
     private val repos: NewsRepository,
@@ -13,7 +11,7 @@ open class RepositoryViewModel(
         repos.insertArticle(article)
     }
 
-    fun deleteArticle(article: ArticleEntity) {
-        repos.deleteArticle(article)
+    fun deleteArticle(url: String?) {
+        repos.deleteArticle(url)
     }
 }

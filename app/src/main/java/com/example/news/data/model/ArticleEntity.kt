@@ -1,20 +1,31 @@
 package com.example.news.data.model
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@JsonClass(generateAdapter = false)
 open class ArticleEntity(
+    @Json(name = "author")
     var author: String? = null,
+    @Json(name = "content")
     var content: String? = null,
-    var description: String = "",
-    var publishedAt: String = "",
-    var source: SourceEntity? = null,
-    var title: String = "",
+    @Json(name = "description")
+    var description: String? = null,
+    @Json(name = "publishedAt")
+    var publishedAt: String? = null,
+    @Json(name = "source.name")
+    var source: String? = null,
+    @Json(name = "title")
+    var title: String? = null,
     @PrimaryKey
-    var url: String = "",
+    @Json(name = "url")
+    var url: String? = null,
+    @Json(name = "urlToImage")
     var urlToImage: String? = null,
 ) : RealmObject(), Parcelable {
 
@@ -35,26 +46,14 @@ open class ArticleEntity(
     }
 
     override fun hashCode(): Int {
-        var result = 31 * (author?.hashCode() ?: 0)
-        result = 31 * result + (content?.hashCode() ?: 0)
+        var result = 31 * author.hashCode()
+        result = 31 * result + content.hashCode()
         result = 31 * result + description.hashCode()
         result = 31 * result + publishedAt.hashCode()
-        result = 31 * result + (source?.hashCode() ?: 0)
+        result = 31 * result + source.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + url.hashCode()
         result = 31 * result + urlToImage.hashCode()
         return result
     }
-
-    fun copy(): ArticleEntity =
-        ArticleEntity(
-            author = author,
-            content = content,
-            description = description,
-            publishedAt = publishedAt,
-            source = source?.copy(),
-            title = title,
-            url = url,
-            urlToImage = urlToImage,
-        )
 }

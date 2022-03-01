@@ -1,7 +1,6 @@
 package com.example.news.application
 
 import android.app.Application
-import com.vicpin.krealmextensions.getRealmInstance
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.Realm
 import io.realm.RealmConfiguration

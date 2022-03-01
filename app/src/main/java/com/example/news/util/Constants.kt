@@ -7,7 +7,5 @@ object Constants {
 
     const val QUERY_LANGUAGE = "ru"
 
-    const val DB_NAME = "News.db"
-
     const val SEARCH_NEWS_TIME_DELAY = 500L
 }

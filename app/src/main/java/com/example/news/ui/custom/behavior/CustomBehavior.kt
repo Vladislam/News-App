@@ -3,7 +3,6 @@ package com.example.news.ui.custom.behavior
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.marginTop
 import com.google.android.material.bottomnavigation.BottomNavigationView

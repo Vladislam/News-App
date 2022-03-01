@@ -51,7 +51,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
             val action =
                 BreakingNewsFragmentDirections.actionBreakingNewsFragment2ToArticleFragment2(
                     article,
-                    article.title
+                    article.title ?: getString(R.string.article)
                 )
             findNavController().navigate(action)
         }

@@ -31,7 +31,7 @@ class NewsRepository @Inject constructor(
         return dao.getAllArticles()
     }
 
-    fun deleteArticle(article: ArticleEntity) {
-        dao.deleteArticle(article)
+    fun deleteArticle(url: String?) {
+        dao.deleteArticle(url)
     }
 }

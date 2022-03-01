@@ -10,7 +10,7 @@
             type="Boolean" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.fragments.ArticleFragment">
@@ -32,7 +32,7 @@
             app:fabSize="normal"
             app:tint="#E0133D" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </FrameLayout>
 </layout>
 
 

@@ -13,9 +13,7 @@ class ArticleDao @Inject constructor(
 ) {
 
     fun insertArticle(article: ArticleEntity) {
-        if (!article.isValid)
-            throw IllegalArgumentException("ARTICLE IS NOT VALID $article")
-        realm.executeTransaction {
+        realm.executeTransactionAsync {
             it.insertOrUpdate(article)
         }
     }
@@ -37,12 +35,10 @@ class ArticleDao @Inject constructor(
         return entries != null
     }
 
-    fun deleteArticle(article: ArticleEntity) {
-        if (!article.isValid)
-            throw IllegalArgumentException("ARTICLE IS NOT VALID $article")
-        realm.executeTransaction {
+    fun deleteArticle(url: String?) {
+        realm.executeTransactionAsync {
             val articleToDelete = it.where(ArticleEntity::class.java)
-                .equalTo("url", article.url)
+                .equalTo("url", url)
                 .findFirst()
 
             articleToDelete?.deleteFromRealm()

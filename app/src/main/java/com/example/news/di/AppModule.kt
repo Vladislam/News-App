@@ -5,7 +5,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.realm.Realm
-import io.realm.RealmConfiguration
 
 @Module
 @InstallIn(SingletonComponent::class)

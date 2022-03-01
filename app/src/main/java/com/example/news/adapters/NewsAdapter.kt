@@ -14,7 +14,6 @@ class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null)
     ListAdapter<ArticleEntity, RecyclerView.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsViewHolder {
-
         return NewsViewHolder(
             ItemArticlePreviewBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -56,11 +55,13 @@ class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null)
                     .load(urlToImage)
                     .placeholder(R.drawable.no_image_placeholder)
                     .into(ivArticleImage)
-                tvSource.text = source?.name ?: ""
+                tvSource.text = source
                 tvTitle.text = title
                 tvDescription.text = description
-                tvPublishedAt.text =
-                    publishedAt.replace('T', ' ').substring(0, publishedAt.length - 1)
+                publishedAt?.let {
+                    tvPublishedAt.text =
+                        it.replace('T', ' ').substring(0, it.length - 1)
+                }
             }
         }
     }

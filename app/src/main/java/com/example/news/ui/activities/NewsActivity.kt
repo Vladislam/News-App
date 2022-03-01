@@ -2,6 +2,7 @@ package com.example.news.ui.activities
 
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -10,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.news.R
 import com.example.news.databinding.ActivityNewsBinding
 import com.example.news.ui.activities.base.BaseActivity
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +44,10 @@ class NewsActivity : BaseActivity(R.layout.activity_news) {
     }
 
     fun slideUpBottomNavigationBar() {
-        binding.bottomNavigationView.translationY = 0f
+        binding.bottomNavigationView.apply {
+            ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior).slideUp(this)
+        }
+//        binding.bottomNavigationView.translationY = 0f
     }
 
     override fun setupBinding(layout: Int): ViewGroup {

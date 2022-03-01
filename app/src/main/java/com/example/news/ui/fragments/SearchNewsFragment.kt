@@ -77,7 +77,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
             val action =
                 SearchNewsFragmentDirections.actionSearchNewsFragment2ToArticleFragment3(
                     article,
-                    article.title
+                    article.title ?: getString(R.string.article)
                 )
             findNavController().navigate(action)
         }
