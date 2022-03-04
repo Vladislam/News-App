@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -54,6 +55,8 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
         swipeToRefresh.setOnRefreshListener {
             if (editTextSearch.text.isNotEmpty()) {
                 viewModel.searchNews(editTextSearch.text.toString())
+            } else {
+                swipeToRefresh.isRefreshing = false
             }
         }
     }
@@ -104,6 +107,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
     private fun hideProgressBar() {
         binding.paginationProgressBar.visibility = View.GONE
         pagingScrollListener.isLoading = false
+        binding.swipeToRefresh.isRefreshing = false
     }
 
     private fun showProgressBar() {
@@ -120,11 +124,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
                             showProgressBar()
                     }
                     is Resource.Success -> {
-                        if (binding.swipeToRefresh.isRefreshing) {
-                            binding.swipeToRefresh.isRefreshing = false
-                        } else {
-                            hideProgressBar()
-                        }
+                        hideProgressBar()
                         response.data?.let { newsResponse ->
                             searchNewsAdapter.submitList(newsResponse.articles)
 
@@ -135,8 +135,17 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
                     }
                     is Resource.Error -> {
                         hideProgressBar()
-                        response.message?.let {
-                            Log.e(TAG, "An error has occurred $it")
+                        response.message?.let { message ->
+                            Toast.makeText(
+                                requireContext(),
+                                String.format(
+                                    getString(R.string.error_occurred_with_message),
+                                    message
+                                ),
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            Log.e(TAG, "An error has occurred $message")
                         }
                     }
                 }

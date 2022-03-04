@@ -1,10 +1,10 @@
-package com.example.news.viewmodels
+package com.example.news.viewmodels.base
 
 import androidx.lifecycle.ViewModel
 import com.example.news.data.model.ArticleEntity
 import com.example.news.repository.NewsRepository
 
-open class RepositoryViewModel(
+abstract class RepositoryViewModel(
     private val repos: NewsRepository,
 ) : ViewModel() {
     fun saveArticle(article: ArticleEntity) {

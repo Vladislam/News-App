@@ -75,7 +75,10 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
                         val article = savedNewsAdapter.currentList[viewHolder.adapterPosition]
                         viewModel.deleteArticle(article?.url)
 
-                        showSnackBarWithAction(R.string.article_has_been_deleted, R.string.undo) {
+                        showSnackBarWithAction(
+                            getString(R.string.article_has_been_deleted),
+                            getString(R.string.undo)
+                        ) {
                             viewModel.saveArticle(article)
                         }
                     }

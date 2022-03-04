@@ -5,15 +5,16 @@ import com.example.news.ui.activities.NewsActivity
 import com.google.android.material.snackbar.Snackbar
 
 inline fun Fragment.showSnackBarWithAction(
-    title: Int,
-    actionTitle: Int,
+    title: String,
+    actionTitle: String,
     crossinline action: Snackbar.() -> Unit
 ) =
-    Snackbar.make(requireView(), getString(title), Snackbar.LENGTH_LONG).apply {
+    Snackbar.make(requireView(), title, Snackbar.LENGTH_LONG).apply {
         animationMode = Snackbar.ANIMATION_MODE_FADE
-        setAction(getString(actionTitle)) {
+        setAction(actionTitle) {
             action()
         }
     }.show()
 
-fun Fragment.slideUpBottomNavigationBar() = (requireActivity() as NewsActivity).slideUpBottomNavigationBar()
+fun Fragment.slideUpBottomNavigationBar() =
+    (requireActivity() as NewsActivity).slideUpBottomNavigationBar()

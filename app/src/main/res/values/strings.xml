@@ -13,4 +13,5 @@
     <string name="search">Search</string>
     <string name="saved">Saved</string>
     <string name="article">Article</string>
+    <string name="error_occurred_with_message">An error has occurred: %s</string>
 </resources>
