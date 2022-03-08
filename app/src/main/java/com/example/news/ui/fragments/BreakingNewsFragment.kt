@@ -1,5 +1,6 @@
 package com.example.news.ui.fragments
 
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,12 +16,14 @@ import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentBreakingNewsBinding
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
-import com.example.news.util.Constants.QUERY_LANGUAGE
-import com.example.news.util.Constants.QUERY_PAGE_SIZE
 import com.example.news.util.Resource
+import com.example.news.util.broadcastreceiver.ConnectivityReceiver
+import com.example.news.util.consts.Constants.QUERY_LANGUAGE
+import com.example.news.util.consts.Constants.QUERY_PAGE_SIZE
 import com.example.news.viewmodels.BreakingNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
@@ -38,11 +41,23 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
 
     private lateinit var pagingScrollListener: PagingScrollListener
 
+    @Inject
+    lateinit var connectivityReceiver: ConnectivityReceiver
+
     override fun setup(savedInstanceState: Bundle?) {
+        setupCallbacks()
+
         setupRecycler()
         setupSwipeToRefresh()
 
         setupViewModel()
+    }
+
+    private fun setupCallbacks() {
+        connectivityReceiver.registerCallback {
+            viewModel.getBreakingNews(QUERY_LANGUAGE)
+            connectivityReceiver.unregister(requireContext())
+        }
     }
 
     private fun setupSwipeToRefresh() {
@@ -54,7 +69,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     }
 
     private fun setupRecycler() {
-        pagingScrollListener = PagingScrollListener(viewModel::pagingBreakingNews, QUERY_LANGUAGE)
+        pagingScrollListener = PagingScrollListener { viewModel.pagingBreakingNews(QUERY_LANGUAGE) }
 
         newsAdapter = NewsAdapter { article ->
             val action =
@@ -118,6 +133,14 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
 
                             Log.e(TAG, "An error has occurred $message")
                         }
+                        if (response.message == getString(R.string.no_internet)) {
+                            connectivityReceiver.register(
+                                requireContext(),
+                                IntentFilter().apply {
+                                    addAction("android.net.conn.CONNECTIVITY_CHANGE")
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -132,5 +155,6 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        connectivityReceiver.unregister(requireContext())
     }
 }

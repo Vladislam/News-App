@@ -84,6 +84,15 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
                     }
                 }).attachToRecyclerView(this)
 
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        val firstItemPosition =
+                            (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                        if (firstItemPosition == 0 || firstItemPosition == RecyclerView.NO_POSITION)
+                            slideUpBottomNavigationBar()
+                    }
+                })
                 adapter = savedNewsAdapter
                 layoutManager = LinearLayoutManager(activity)
             }

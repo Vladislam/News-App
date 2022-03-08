@@ -1,14 +1,12 @@
 package com.example.news.ui.listeners
 
 import android.widget.AbsListView
-import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.news.util.Constants
+import com.example.news.util.consts.Constants
 
 class PagingScrollListener(
-    private val pagingAction: (String) -> Unit,
-    private val arg: Any,
+    private val pagingAction: () -> Unit
 
 ) : RecyclerView.OnScrollListener() {
 
@@ -31,17 +29,7 @@ class PagingScrollListener(
             isNotLoadingAndNotLastPage && isLastItemToPaginate && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
 
         if (shouldPaginate) {
-            pagingAction.invoke(when (arg) {
-                is String -> {
-                    arg.ifEmpty { return }
-                }
-                is EditText -> {
-                    arg.text.toString().ifEmpty { return }
-                }
-                else -> {
-                    return
-                }
-            })
+            pagingAction.invoke()
             isScrolling = false
         }
     }

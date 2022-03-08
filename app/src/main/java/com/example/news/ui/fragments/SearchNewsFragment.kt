@@ -1,5 +1,6 @@
 package com.example.news.ui.fragments
 
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,15 +18,18 @@ import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSearchNewsBinding
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
-import com.example.news.util.Constants
-import com.example.news.util.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.Resource
+import com.example.news.util.broadcastreceiver.ConnectivityReceiver
+import com.example.news.util.consts.Constants
+import com.example.news.util.consts.Constants.QUERY_LANGUAGE
+import com.example.news.util.consts.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
@@ -43,12 +47,26 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
 
     private lateinit var pagingScrollListener: PagingScrollListener
 
+    @Inject
+    lateinit var connectivityReceiver: ConnectivityReceiver
+
     override fun setup(savedInstanceState: Bundle?) {
         slideUpBottomNavigationBar()
+        setupCallbacks()
         setupRecycler()
         setupEditText()
         setupSwipeToRefresh()
         setupViewModel()
+    }
+
+    private fun setupCallbacks() {
+        connectivityReceiver.registerCallback {
+            val et = binding.editTextSearch
+            if (et.text.isNotEmpty()) {
+                viewModel.searchNews(et.text.toString())
+                connectivityReceiver.unregister(requireContext())
+            }
+        }
     }
 
     private fun setupSwipeToRefresh() = binding.apply {
@@ -81,10 +99,7 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
     }
 
     private fun setupRecycler() {
-        pagingScrollListener = PagingScrollListener(
-            viewModel::pagingSearchNews,
-            binding.editTextSearch
-        )
+        pagingScrollListener = PagingScrollListener { viewModel.pagingSearchNews(QUERY_LANGUAGE) }
 
         searchNewsAdapter = NewsAdapter { article ->
             val action =
@@ -147,6 +162,14 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
 
                             Log.e(TAG, "An error has occurred $message")
                         }
+                        if (response.message == getString(R.string.no_internet)) {
+                            connectivityReceiver.register(
+                                requireContext(),
+                                IntentFilter().apply {
+                                    addAction("android.net.conn.CONNECTIVITY_CHANGE")
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -161,5 +184,6 @@ class SearchNewsFragment : BaseFragment(R.layout.fragment_search_news) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        connectivityReceiver.unregister(requireContext())
     }
 }

@@ -1,12 +1,13 @@
 package com.example.news.viewmodels
 
-import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.news.R
 import com.example.news.data.model.NewsResponse
 import com.example.news.repository.NewsRepository
-import com.example.news.util.Constants
+import com.example.news.util.ConnectionHelper
 import com.example.news.util.Resource
-import com.example.news.viewmodels.base.SafeInternetViewModel
+import com.example.news.util.consts.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BreakingNewsViewModel @Inject constructor(
     private val repos: NewsRepository,
-    app: Application
-) : SafeInternetViewModel(app) {
+    private val connectionHelper: ConnectionHelper
+) : AndroidViewModel(connectionHelper.app) {
 
     private var breakingNewsResponse: NewsResponse? = null
     private val _breakingNewsState =
@@ -69,16 +70,34 @@ class BreakingNewsViewModel @Inject constructor(
     private suspend fun safeBreakingNewsCall(countryCode: String, isPaging: Boolean) {
         _breakingNewsState.emit(Resource.Loading())
         try {
-            if (hasInternetConnection()) {
+            if (connectionHelper.hasInternetConnection()) {
                 val response = repos.getBreakingNews(countryCode, breakingNewsPage)
                 _breakingNewsState.emit(handleBreakingNewsResponse(response, isPaging))
             } else {
-                _breakingNewsState.emit(Resource.Error("No Internet connection"))
+                _breakingNewsState.emit(
+                    Resource.Error(
+                        connectionHelper.app.getString(
+                            R.string.no_internet
+                        )
+                    )
+                )
             }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> _breakingNewsState.emit(Resource.Error("Network Failure"))
-                else -> _breakingNewsState.emit(Resource.Error("Conversion Error"))
+                is IOException -> _breakingNewsState.emit(
+                    Resource.Error(
+                        connectionHelper.app.getString(
+                            R.string.network_failure
+                        )
+                    )
+                )
+                else -> _breakingNewsState.emit(
+                    Resource.Error(
+                        connectionHelper.app.getString(
+                            R.string.conversion_error
+                        )
+                    )
+                )
             }
         }
     }

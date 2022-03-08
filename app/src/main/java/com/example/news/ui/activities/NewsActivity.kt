@@ -13,6 +13,7 @@ import com.example.news.databinding.ActivityNewsBinding
 import com.example.news.ui.activities.base.BaseActivity
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NewsActivity : BaseActivity(R.layout.activity_news) {
