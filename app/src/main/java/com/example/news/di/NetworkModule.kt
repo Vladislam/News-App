@@ -1,7 +1,7 @@
 package com.example.news.di
 
 import com.example.news.api.NewsApiService
-import com.example.news.util.consts.Constants.BASE_URL
+import com.example.news.util.const.Constants.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

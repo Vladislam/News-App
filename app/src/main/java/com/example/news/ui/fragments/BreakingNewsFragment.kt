@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.R
@@ -18,8 +20,7 @@ import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Resource
 import com.example.news.util.broadcastreceiver.ConnectivityReceiver
-import com.example.news.util.consts.Constants.QUERY_LANGUAGE
-import com.example.news.util.consts.Constants.QUERY_PAGE_SIZE
+import com.example.news.util.const.Constants.QUERY_PAGE_SIZE
 import com.example.news.viewmodels.BreakingNewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
 
     private fun setupCallbacks() {
         connectivityReceiver.registerCallback {
-            viewModel.getBreakingNews(QUERY_LANGUAGE)
+            viewModel.getBreakingNews()
             connectivityReceiver.unregister(requireContext())
         }
     }
@@ -63,13 +64,13 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     private fun setupSwipeToRefresh() {
         binding.apply {
             swipeToRefresh.setOnRefreshListener {
-                viewModel.getBreakingNews(QUERY_LANGUAGE)
+                viewModel.getBreakingNews()
             }
         }
     }
 
     private fun setupRecycler() {
-        pagingScrollListener = PagingScrollListener { viewModel.pagingBreakingNews(QUERY_LANGUAGE) }
+        pagingScrollListener = PagingScrollListener { viewModel.pagingBreakingNews() }
 
         newsAdapter = NewsAdapter { article ->
             val action =

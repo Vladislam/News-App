@@ -4,7 +4,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.R
 import com.example.news.data.model.NewsResponse
-import com.example.news.repository.NewsRepository
+import com.example.news.data.repository.NewsRepository
 import com.example.news.util.ConnectionHelper
 import com.example.news.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

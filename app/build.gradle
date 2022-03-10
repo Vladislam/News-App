@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.news"
-        minSdk 23
+        minSdk 24
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -88,4 +88,8 @@ dependencies {
     // Moshi
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+
+    // Datastore Preferences
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
 }

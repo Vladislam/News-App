@@ -3,14 +3,15 @@ package com.example.news.viewmodels
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.R
+import com.example.news.data.managers.PreferencesDataStoreManager
 import com.example.news.data.model.NewsResponse
-import com.example.news.repository.NewsRepository
+import com.example.news.data.repository.NewsRepository
 import com.example.news.util.ConnectionHelper
 import com.example.news.util.Resource
-import com.example.news.util.consts.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BreakingNewsViewModel @Inject constructor(
     private val repos: NewsRepository,
-    private val connectionHelper: ConnectionHelper
+    private val connectionHelper: ConnectionHelper,
+    preferencesManager: PreferencesDataStoreManager,
 ) : AndroidViewModel(connectionHelper.app) {
 
     private var breakingNewsResponse: NewsResponse? = null
@@ -28,21 +30,28 @@ class BreakingNewsViewModel @Inject constructor(
     val breakingNewsState get() = _breakingNewsState.asStateFlow()
     var breakingNewsPage = 1
 
+    private val preferencesFlow = preferencesManager.preferencesFlow
+
     init {
-        getBreakingNews(Constants.QUERY_LANGUAGE)
+        viewModelScope.launch {
+            preferencesFlow.collect {
+                getBreakingNews()
+            }
+        }
     }
 
-    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        breakingNewsResponse = null
-        breakingNewsPage = 1
+    fun getBreakingNews() =
+        viewModelScope.launch {
+            breakingNewsResponse = null
+            breakingNewsPage = 1
 
-        safeBreakingNewsCall(countryCode, false)
-    }
+            safeBreakingNewsCall(preferencesFlow.first().countryCode, false)
+        }
 
-    fun pagingBreakingNews(countryCode: String) = viewModelScope.launch {
+    fun pagingBreakingNews() = viewModelScope.launch {
         ++breakingNewsPage
 
-        safeBreakingNewsCall(countryCode, true)
+        safeBreakingNewsCall(preferencesFlow.first().countryCode, true)
     }
 
     private fun handleBreakingNewsResponse(

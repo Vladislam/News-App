@@ -18,4 +18,12 @@
     <string name="network_failure">Network Failure</string>
     <string name="conversion_error">Conversion Error</string>
     <string name="unexpected_error">An unexpected Error has occurred</string>
+    <string name="settings">Settings</string>
+    <string name="current_country">Current country:</string>
+    <string name="breaking_news_country">Set country for Breaking News</string>
+    <string name="list_of_countries">List of countries</string>
+    <string name="enable_dark_theme">Enable dark theme</string>
+    <string name="save">Save</string>
+    <string name="error_country_code_not_exists">Error! This country does not exist or is not supported</string>
+    <string name="country_code">Country code</string>
 </resources>

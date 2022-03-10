@@ -20,9 +20,9 @@ import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Resource
 import com.example.news.util.broadcastreceiver.ConnectivityReceiver
-import com.example.news.util.consts.Constants
-import com.example.news.util.consts.Constants.QUERY_LANGUAGE
-import com.example.news.util.consts.Constants.SEARCH_NEWS_TIME_DELAY
+import com.example.news.util.const.Constants
+import com.example.news.util.const.Constants.QUERY_LANGUAGE
+import com.example.news.util.const.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -3,7 +3,7 @@ package com.example.news.ui.listeners
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.news.util.consts.Constants
+import com.example.news.util.const.Constants
 
 class PagingScrollListener(
     private val pagingAction: () -> Unit

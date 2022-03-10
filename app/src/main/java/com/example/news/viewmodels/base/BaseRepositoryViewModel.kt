@@ -2,7 +2,7 @@ package com.example.news.viewmodels.base
 
 import androidx.lifecycle.ViewModel
 import com.example.news.data.model.ArticleEntity
-import com.example.news.repository.NewsRepository
+import com.example.news.data.repository.NewsRepository
 
 abstract class BaseRepositoryViewModel(
     private val repos: NewsRepository,
