@@ -13,7 +13,7 @@ import com.example.news.R
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.activities.NewsActivity
 import com.example.news.ui.fragments.base.BaseFragment
-import com.example.news.util.extensions.slideUpBottomNavigationBar
+import com.example.news.util.extensions.slideDownBottomNavigationBar
 import com.example.news.viewmodels.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,12 +23,12 @@ class ArticleFragment : BaseFragment(R.layout.fragment_article) {
     private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding!!
 
-    private val args: ArticleFragmentArgs by navArgs()
+    private val args: ArticleFragmentArgs by navArgs<ArticleFragmentArgs>()
 
     private val viewModel: ArticleViewModel by viewModels()
 
     override fun setup(savedInstanceState: Bundle?) {
-        slideUpBottomNavigationBar()
+        slideDownBottomNavigationBar()
 
         setupViews()
         setupBackButton()

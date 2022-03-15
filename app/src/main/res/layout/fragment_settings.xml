@@ -5,13 +5,6 @@
 
     <data>
 
-        <variable
-            name="countryCode"
-            type="String" />
-
-        <variable
-            name="isDarkTheme"
-            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -25,7 +18,7 @@
             android:orientation="vertical">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardChangeCountry"
+                android:id="@+id/buttonChangeCountry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -33,87 +26,27 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:backgroundTint="?attr/colorSecondary"
+                android:elevation="4dp"
                 app:cardCornerRadius="10dp"
                 app:strokeColor="?attr/colorPrimary"
                 app:strokeWidth="1dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/textViewChangeCountry"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="10dp"
-                        android:singleLine="true"
-                        android:text="@string/breaking_news_country"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/inputLayoutSpinner"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/inputLayoutSpinner" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputLayoutSpinner"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="36dp"
-                        android:minHeight="36dp"
-                        android:selectAllOnFocus="true"
-                        app:boxStrokeWidth="0dp"
-                        app:boxStrokeWidthFocused="0dp"
-                        app:hintEnabled="false"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerCountries"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textCapCharacters"
-                            android:text="@{countryCode}"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="16sp"
-                            tools:text="UA"
-                            tools:ignore="LabelFor" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/btnSaveCountryCode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:backgroundTint="?attr/colorOnPrimary"
-                        app:cardCornerRadius="14dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/inputLayoutSpinner"
-                        app:strokeColor="?attr/colorSurface"
-                        app:strokeWidth="1dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingStart="24dp"
-                            android:paddingTop="10dp"
-                            android:paddingEnd="24dp"
-                            android:paddingBottom="10dp"
-                            android:text="@string/save"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="14sp">
-
-                        </TextView>
-                    </com.google.android.material.card.MaterialCardView>
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textViewChangeCountry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="6dp"
+                    android:padding="10dp"
+                    android:singleLine="true"
+                    android:text="@string/breaking_news_country"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
 
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardDarkTheme"
+                android:id="@+id/buttonChangeDarkTheme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -121,16 +54,17 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:backgroundTint="?attr/colorSecondary"
+                android:elevation="4dp"
                 app:cardCornerRadius="10dp"
                 app:strokeColor="?attr/colorPrimary"
                 app:strokeWidth="1dp">
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchDarkTheme"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textViewDarkTheme"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:checked="@{isDarkTheme}"
+                    android:layout_gravity="center"
+                    android:layout_margin="6dp"
                     android:padding="10dp"
                     android:text="@string/enable_dark_theme"
                     android:textColor="?attr/colorOnSurface"

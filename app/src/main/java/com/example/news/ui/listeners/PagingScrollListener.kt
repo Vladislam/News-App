@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.news.util.const.Constants
 
 class PagingScrollListener(
-    private val pagingAction: () -> Unit
+    private var pagingAction: () -> Unit
 
 ) : RecyclerView.OnScrollListener() {
 
@@ -22,7 +22,7 @@ class PagingScrollListener(
         val totalItemCount = layoutManager.itemCount
 
         val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
-        val isLastItemToPaginate = firstVisibleItemPosition + visibleItemCount > totalItemCount - 3
+        val isLastItemToPaginate = firstVisibleItemPosition + visibleItemCount > totalItemCount - 2
         val isNotAtBeginning = firstVisibleItemPosition >= 0
         val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
         val shouldPaginate =
@@ -32,6 +32,10 @@ class PagingScrollListener(
             pagingAction.invoke()
             isScrolling = false
         }
+    }
+
+    fun registerCallback(callback: () -> Unit) {
+        this.pagingAction = callback
     }
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

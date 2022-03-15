@@ -23,13 +23,13 @@ class ArticleDao @Inject constructor(
 
     fun articleExists(article: ArticleEntity): Boolean {
         val entries = realm.where(ArticleEntity::class.java)
-            .equalTo("description", article.description)
+            .equalTo(article::description.name, article.description)
             .or()
-            .equalTo("publishedAt", article.publishedAt)
+            .equalTo(article::publishedAt.name, article.publishedAt)
             .or()
-            .equalTo("title", article.title)
+            .equalTo(article::title.name, article.title)
             .or()
-            .equalTo("url", article.url)
+            .equalTo(article::url.name, article.url)
             .findFirst()
 
         return entries != null
@@ -38,7 +38,7 @@ class ArticleDao @Inject constructor(
     fun deleteArticle(url: String?) {
         realm.executeTransactionAsync {
             val articleToDelete = it.where(ArticleEntity::class.java)
-                .equalTo("url", url)
+                .equalTo(ArticleEntity::url.name, url)
                 .findFirst()
 
             articleToDelete?.deleteFromRealm()

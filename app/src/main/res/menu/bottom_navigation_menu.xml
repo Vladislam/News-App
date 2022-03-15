@@ -6,15 +6,11 @@
         android:icon="@drawable/ic_breaking_news"
         android:title="@string/breaking_news" />
     <item
-        android:id="@+id/search_nav_graph"
-        android:icon="@drawable/ic_search_24"
-        android:title="@string/search" />
-    <item
         android:id="@+id/saved_nav_graph"
         android:icon="@drawable/ic_favorite_filled"
         android:title="@string/saved" />
     <item
-        android:id="@+id/settingsFragment"
+        android:id="@+id/settings_nav_graph"
         android:icon="@drawable/ic_settings_24"
         android:title="@string/settings" />
 

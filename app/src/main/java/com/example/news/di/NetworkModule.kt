@@ -1,6 +1,8 @@
 package com.example.news.di
 
 import com.example.news.api.NewsApiService
+import com.example.news.data.moshiadapters.DateAdapter
+import com.example.news.data.moshiadapters.SourceNameAdapter
 import com.example.news.util.const.Constants.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -27,7 +29,9 @@ class NetworkModule {
 
     @Provides
     fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
+        .add(SourceNameAdapter())
+        .add(DateAdapter())
+        .addLast(KotlinJsonAdapterFactory())
         .build()
 
     @Provides

@@ -1,6 +1,8 @@
-package com.example.news.application
+package com.example.news
 
 import android.app.Application
+import com.example.news.data.migrations.UpdateRealmMigration
+import com.example.news.data.migrations.UpdateRealmMigration.Companion.SCHEMA_VERSION
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -15,7 +17,8 @@ class NewsApp : Application() {
 
         Realm.setDefaultConfiguration(
             RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(SCHEMA_VERSION)
+                .migration(UpdateRealmMigration())
                 .allowWritesOnUiThread(true)
                 .build()
         )

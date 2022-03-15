@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/inputLayoutSpinner"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="end"
+    android:minWidth="36dp"
+    android:minHeight="36dp"
+    android:selectAllOnFocus="true"
+    app:boxStrokeWidth="0dp"
+    app:boxStrokeWidthFocused="0dp"
+    app:hintEnabled="false">
+
+    <AutoCompleteTextView
+        android:id="@+id/spinnerCountries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:inputType="textCapSentences"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="16sp"
+        tools:ignore="LabelFor"
+        tools:text="Ukraine" />
+</com.google.android.material.textfield.TextInputLayout>

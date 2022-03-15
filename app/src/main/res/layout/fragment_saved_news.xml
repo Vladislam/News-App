@@ -5,9 +5,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.SavedNewsFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSavedNews"
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSavedNews"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/textViewNoItems"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_saved_items_message"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </ViewSwitcher>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

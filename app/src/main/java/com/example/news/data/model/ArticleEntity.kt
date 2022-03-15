@@ -1,11 +1,14 @@
 package com.example.news.data.model
 
 import android.os.Parcelable
+import com.example.news.data.moshiadapters.DateString
+import com.example.news.data.moshiadapters.SourceName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 @Parcelize
 @JsonClass(generateAdapter = false)
@@ -16,9 +19,11 @@ open class ArticleEntity(
     var content: String? = null,
     @Json(name = "description")
     var description: String? = null,
+    @DateString
     @Json(name = "publishedAt")
-    var publishedAt: String? = null,
-    @Json(name = "source.name")
+    var publishedAt: Date? = null,
+    @SourceName
+    @Json(name = "source")
     var source: String? = null,
     @Json(name = "title")
     var title: String? = null,

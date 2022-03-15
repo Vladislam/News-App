@@ -26,4 +26,15 @@
     <string name="save">Save</string>
     <string name="error_country_code_not_exists">Error! This country does not exist or is not supported</string>
     <string name="country_code">Country code</string>
+    <string name="no_items_placeholder">No items placeholder</string>
+    <string name="change">Change</string>
+    <string name="enter_new_country">Enter new country</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="set_theme">Set theme</string>
+    <string name="system_default">System default</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+    <string name="no_saved_items_message">Seems like there\'s nothing to show</string>
+    <string name="no_internet_message">The internet connection has been lost!</string>
 </resources>

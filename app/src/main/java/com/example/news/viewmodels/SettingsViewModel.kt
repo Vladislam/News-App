@@ -20,7 +20,7 @@ class SettingsViewModel @Inject constructor(
         preferencesManager.updateCountry(text)
     }
 
-    fun onSwitchDarkThemeClick(checked: Boolean) = viewModelScope.launch {
-        preferencesManager.updateDarkTheme(checked)
+    fun onSwitchDarkThemeClick(theme: Int) = viewModelScope.launch {
+        preferencesManager.updateDarkTheme(theme)
     }
 }

@@ -6,25 +6,33 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.BreakingNewsFragment">
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewBreakingNews"
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            tools:listitem="@layout/item_article_preview" />
+            android:inAnimation="@android:anim/fade_in"
+            android:outAnimation="@android:anim/fade_out">
 
-        <ImageView
-            android:id="@+id/imageNoInternet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:cropToPadding="true"
-            android:src="@drawable/no_internet"
-            android:contentDescription="@string/no_internet" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewBreakingNews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_article_preview" />
+
+            <TextView
+                android:id="@+id/textViewNoInternet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/no_internet_message"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </ViewSwitcher>
 
         <ProgressBar
             android:id="@+id/paginationProgressBar"
@@ -35,5 +43,5 @@
             android:background="@android:color/transparent"
             android:visibility="gone" />
 
-    </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -18,3 +18,6 @@ inline fun Fragment.showSnackBarWithAction(
 
 fun Fragment.slideUpBottomNavigationBar() =
     (requireActivity() as NewsActivity).slideUpBottomNavigationBar()
+
+fun Fragment.slideDownBottomNavigationBar() =
+    (requireActivity() as NewsActivity).slideDownBottomNavigationBar()

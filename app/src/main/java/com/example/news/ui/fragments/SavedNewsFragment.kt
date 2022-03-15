@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.news.R
-import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentSavedNewsBinding
+import com.example.news.ui.adapters.NewsAdapter
 import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.util.extensions.copyEntity
+import com.example.news.util.extensions.setupOnSwipeCallback
 import com.example.news.util.extensions.showSnackBarWithAction
 import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.SavedViewModel
@@ -33,12 +33,13 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
         slideUpBottomNavigationBar()
         setupRecycler()
 
-        setupViewModel()
+        setupViewModelCallbacks()
     }
 
-    private fun setupViewModel() {
+    private fun setupViewModelCallbacks() {
         viewModel.getSavedNews()
             .observe(this) { result ->
+                showNextView(result.size)
                 savedNewsAdapter.submitList(result.map {
                     if (it.isManaged) it.copyEntity()
                     else it
@@ -56,48 +57,43 @@ class SavedNewsFragment : BaseFragment(R.layout.fragment_saved_news) {
             findNavController().navigate(action)
         }
 
-        binding.apply {
-            recyclerViewSavedNews.apply {
-                ItemTouchHelper(object :
-                    ItemTouchHelper.SimpleCallback(
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                    ) {
-                    override fun onMove(
-                        recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder,
-                    ): Boolean {
-                        return false
-                    }
+        binding.recyclerViewSavedNews.apply {
+            setupOnSwipeCallback { viewHolder, _ ->
+                val article = savedNewsAdapter.currentList[viewHolder.adapterPosition]
+                viewModel.deleteArticle(article?.url)
 
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val article = savedNewsAdapter.currentList[viewHolder.adapterPosition]
-                        viewModel.deleteArticle(article?.url)
-
-                        showSnackBarWithAction(
-                            getString(R.string.article_has_been_deleted),
-                            getString(R.string.undo)
-                        ) {
-                            viewModel.saveArticle(article)
-                        }
-                    }
-                }).attachToRecyclerView(this)
-
-                addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-                        val firstItemPosition =
-                            (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
-                        if (firstItemPosition == 0 || firstItemPosition == RecyclerView.NO_POSITION)
-                            slideUpBottomNavigationBar()
-                    }
-                })
-                adapter = savedNewsAdapter
-                layoutManager = LinearLayoutManager(activity)
+                showSnackBarWithAction(
+                    getString(R.string.article_has_been_deleted),
+                    getString(R.string.undo)
+                ) {
+                    viewModel.saveArticle(article)
+                }
             }
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val firstItemPosition =
+                        (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                    if (firstItemPosition == 0 || firstItemPosition == RecyclerView.NO_POSITION)
+                        slideUpBottomNavigationBar()
+                }
+            })
+            adapter = savedNewsAdapter
+            layoutManager = LinearLayoutManager(activity)
         }
     }
+
+    private fun showNextView(listLength: Int) =
+        binding.viewSwitcher.apply {
+            if (listLength < 1) {
+                if (nextView.id == R.id.textViewNoItems) {
+                    showNext()
+                }
+            } else if (nextView.id == R.id.recyclerViewSavedNews) {
+                showNext()
+            }
+        }
 
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = FragmentSavedNewsBinding.inflate(inflater, container, false)

@@ -1,12 +1,10 @@
-package com.example.news.adapters
+package com.example.news.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.news.R
 import com.example.news.data.model.ArticleEntity
 import com.example.news.databinding.ItemArticlePreviewBinding
 
@@ -49,21 +47,13 @@ class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null)
             }
         }
 
-        fun bind(item: ArticleEntity) = with(binding) {
-            item.apply {
-                Glide.with(binding.root)
-                    .load(urlToImage)
-                    .placeholder(R.drawable.no_image_placeholder)
-                    .into(ivArticleImage)
-                tvSource.text = source
-                tvTitle.text = title
-                tvDescription.text = description
-                publishedAt?.let {
-                    tvPublishedAt.text =
-                        it.replace('T', ' ').substring(0, it.length - 1)
-                }
-            }
+        fun bind(item: ArticleEntity) {
+            binding.article = item
         }
+    }
+
+    override fun submitList(list: List<ArticleEntity>?) {
+        super.submitList(list?.let { ArrayList(it) })
     }
 
     class DiffCallback : DiffUtil.ItemCallback<ArticleEntity>() {
