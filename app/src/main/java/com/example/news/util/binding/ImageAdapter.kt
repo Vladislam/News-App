@@ -9,15 +9,14 @@ import com.example.news.R
 
 @BindingAdapter("app:imageUrl", "app:placeholder", requireAll = false)
 fun ImageView.loadImage(url: String?, placeholder: Drawable? = null) {
-    url?.let {
-        Glide.with(this)
-            .load(it)
-            .placeholder(
-                placeholder ?: ContextCompat.getDrawable(
-                    this.context,
-                    R.drawable.no_image_placeholder
-                )
+    Glide.with(this)
+        .load(url)
+        .placeholder(
+            placeholder ?: ContextCompat.getDrawable(
+                this.context,
+                R.drawable.no_image_placeholder
             )
-            .into(this)
-    }
+        )
+        .error(R.drawable.no_image_placeholder)
+        .into(this)
 }

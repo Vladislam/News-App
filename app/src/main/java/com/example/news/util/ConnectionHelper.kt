@@ -1,18 +1,18 @@
 package com.example.news.util
 
-import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ConnectionHelper @Inject constructor(
-    val app: Application
+    @ApplicationContext val context: Context
 ) {
     fun hasInternetConnection(): Boolean {
-        val connectivityManager = app.getSystemService(
+        val connectivityManager = context.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
 

@@ -19,6 +19,7 @@ import com.example.news.ui.fragments.base.BaseFragment
 import com.example.news.ui.listeners.PagingScrollListener
 import com.example.news.util.Resource
 import com.example.news.util.broadcastreceiver.ConnectivityReceiver
+import com.example.news.util.const.Constants.MAX_RESULTS_RESTRICTION
 import com.example.news.util.const.Constants.QUERY_PAGE_SIZE
 import com.example.news.util.const.Constants.SEARCH_NEWS_TIME_DELAY
 import com.example.news.util.extensions.onQueryTextChanged
@@ -110,14 +111,14 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                         TAG,
                         getString(R.string.error_occurred_with_message, message)
                     )
-                }
-                if (response.message == getString(R.string.no_internet) && newsAdapter.itemCount < 1) {
-                    connectivityReceiver.register(
-                        requireContext(),
-                        IntentFilter().apply {
-                            addAction("android.net.conn.CONNECTIVITY_CHANGE")
-                        }
-                    )
+                    if (response.message == getString(R.string.no_internet) && newsAdapter.itemCount < 1) {
+                        connectivityReceiver.register(
+                            requireContext(),
+                            IntentFilter().apply {
+                                addAction("android.net.conn.CONNECTIVITY_CHANGE")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -165,11 +166,11 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                             val totalPages =
                                 newsResponse.totalResults / QUERY_PAGE_SIZE + 2
                             pagingScrollListener.isLastPage =
-                                viewModel.searchNewsPage == totalPages
+                                viewModel.searchNewsPage == totalPages || newsResponse.articles.size >= MAX_RESULTS_RESTRICTION
                         }
                     }
                     is Resource.Error -> {
-                        showEmptyMessage()
+                        if (newsAdapter.itemCount < 1) showEmptyMessage()
                         hideProgressBar()
                         response.message?.let { message ->
                             Toast.makeText(
@@ -182,6 +183,14 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                                 TAG,
                                 getString(R.string.error_occurred_with_message, message)
                             )
+                            if (response.message == getString(R.string.no_internet)) {
+                                connectivityReceiver.register(
+                                    requireContext(),
+                                    IntentFilter().apply {
+                                        addAction("android.net.conn.CONNECTIVITY_CHANGE")
+                                    }
+                                )
+                            }
                         }
                     }
                 }

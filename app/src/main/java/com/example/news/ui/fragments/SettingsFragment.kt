@@ -84,7 +84,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
         spinnerCountries.setAdapter(
             ArrayAdapter(
                 requireContext(),
-                R.layout.spinner_item,
+                android.R.layout.simple_spinner_dropdown_item,
                 countryMapper.countryNames,
             )
         )

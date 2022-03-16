@@ -7,7 +7,6 @@ import com.example.news.util.const.Constants
 
 class PagingScrollListener(
     private var pagingAction: () -> Unit
-
 ) : RecyclerView.OnScrollListener() {
 
     var isLoading: Boolean = false

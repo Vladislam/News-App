@@ -1,7 +1,7 @@
 package com.example.news.viewmodels
 
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.R
 import com.example.news.data.managers.PreferencesDataStoreManager
@@ -23,7 +23,7 @@ class BreakingNewsViewModel @Inject constructor(
     private val connectionHelper: ConnectionHelper,
     state: SavedStateHandle,
     preferencesManager: PreferencesDataStoreManager,
-) : AndroidViewModel(connectionHelper.app) {
+) : ViewModel() {
 
     companion object {
         private const val KEY_SEARCH_QUERY = "search_query"
@@ -101,16 +101,16 @@ class BreakingNewsViewModel @Inject constructor(
                 val response = repos.getBreakingNews(countryCode, breakingNewsPage)
                 val result = handleBreakingNewsResponse(response, isPaging)
                 if (result is Resource.Error<*>) issueError(
-                    result.message ?: connectionHelper.app.getString(R.string.unexpected_error)
+                    result.message ?: connectionHelper.context.getString(R.string.unexpected_error)
                 )
                 else if (result is Resource.Success<*>) _breakingNewsState.emit(result)
             } else {
-                issueError(connectionHelper.app.getString(R.string.no_internet))
+                issueError(connectionHelper.context.getString(R.string.no_internet))
             }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> issueError(connectionHelper.app.getString(R.string.network_failure))
-                else -> issueError(connectionHelper.app.getString(R.string.conversion_error))
+                is IOException -> issueError(connectionHelper.context.getString(R.string.network_failure))
+                else -> issueError(connectionHelper.context.getString(R.string.conversion_error))
             }
         }
     }
@@ -153,18 +153,18 @@ class BreakingNewsViewModel @Inject constructor(
                 val response = repos.searchNews(searchQuery, searchNewsPage)
                 _searchNewsState.emit(handleSearchNewsResponse(response, isPaging))
             } else {
-                _searchNewsState.emit(Resource.Error(connectionHelper.app.getString(R.string.no_internet)))
+                _searchNewsState.emit(Resource.Error(connectionHelper.context.getString(R.string.no_internet)))
             }
         } catch (t: Throwable) {
             when (t) {
                 is IOException -> _searchNewsState.emit(
                     Resource.Error(
-                        connectionHelper.app.getString(
+                        connectionHelper.context.getString(
                             R.string.network_failure
                         )
                     )
                 )
-                else -> _searchNewsState.emit(Resource.Error(connectionHelper.app.getString(R.string.conversion_error)))
+                else -> _searchNewsState.emit(Resource.Error(connectionHelper.context.getString(R.string.conversion_error)))
             }
         }
     }
