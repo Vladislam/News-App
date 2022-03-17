@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ArticleViewModel @Inject constructor(
-    private val repos: NewsRepository,
+    repos: NewsRepository,
 ) : BaseRepositoryViewModel(repos) {
 
     fun isArticleSaved(article: ArticleEntity): Boolean = repos.isArticleSaved(article)

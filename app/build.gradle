@@ -93,4 +93,6 @@ dependencies {
     // Datastore Preferences
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
+    // Analog rxBinding
+    implementation 'ru.ldralighieri.corbind:corbind:1.4.0'
 }

@@ -7,9 +7,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.news.data.model.ArticleEntity
 import com.example.news.databinding.ItemArticlePreviewBinding
+import com.example.news.util.const.BindingConstant
+import com.example.news.util.extensions.throttleFirst
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import ru.ldralighieri.corbind.view.clicks
 
 class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null) :
     ListAdapter<ArticleEntity, RecyclerView.ViewHolder>(DiffCallback()) {
+
+    private val recyclerJob = Job()
+    private val recyclerScope = CoroutineScope(Dispatchers.Main + recyclerJob)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsViewHolder {
         return NewsViewHolder(
@@ -39,18 +50,22 @@ class NewsAdapter(private val listener: ((item: ArticleEntity) -> Unit)? = null)
 
         init {
             binding.apply {
-                root.setOnClickListener {
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
-                        listener?.invoke(getItem(adapterPosition))
+                root.clicks()
+                    .throttleFirst(BindingConstant.SMALL_THROTTLE)
+                    .onEach {
+                        if (adapterPosition != RecyclerView.NO_POSITION) {
+                            listener?.invoke(getItem(adapterPosition))
+                        }
                     }
-                }
+                    .launchIn(recyclerScope)
             }
         }
 
-        fun bind(item: ArticleEntity) {
-            binding.article = item
+        fun bind(item: ArticleEntity) = binding.apply {
+            article = item
         }
     }
+
 
     override fun submitList(list: List<ArticleEntity>?) {
         super.submitList(list?.let { ArrayList(it) })

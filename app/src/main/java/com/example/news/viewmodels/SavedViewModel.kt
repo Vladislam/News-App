@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedViewModel @Inject constructor(
-    private val repos: NewsRepository,
+    repos: NewsRepository,
 ) : BaseRepositoryViewModel(repos) {
 
     fun getSavedNews() = repos.getSavedNews()

@@ -5,7 +5,7 @@ import com.example.news.data.model.ArticleEntity
 import com.example.news.data.repository.NewsRepository
 
 abstract class BaseRepositoryViewModel(
-    private val repos: NewsRepository,
+    protected val repos: NewsRepository,
 ) : ViewModel() {
     fun saveArticle(article: ArticleEntity) {
         repos.insertArticle(article)

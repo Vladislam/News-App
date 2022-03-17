@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.news.R
 import com.example.news.databinding.FragmentThemesChoiceBinding
 import com.example.news.ui.fragments.base.BaseFragment
+import com.example.news.util.extensions.launchViewLifecycleScope
 import com.example.news.viewmodels.SettingsViewModel
-import kotlinx.coroutines.launch
 
 class ThemesChoiceFragment : BaseFragment(R.layout.fragment_themes_choice) {
 
@@ -27,7 +26,7 @@ class ThemesChoiceFragment : BaseFragment(R.layout.fragment_themes_choice) {
     }
 
     private fun setupViewModelCallbacks() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchViewLifecycleScope {
             viewModel.preferencesFlow.collect { preferences ->
                 when (preferences.appTheme) {
                     AppCompatDelegate.MODE_NIGHT_YES -> {

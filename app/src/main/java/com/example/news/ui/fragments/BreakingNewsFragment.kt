@@ -22,6 +22,7 @@ import com.example.news.util.broadcastreceiver.ConnectivityReceiver
 import com.example.news.util.const.Constants.MAX_RESULTS_RESTRICTION
 import com.example.news.util.const.Constants.QUERY_PAGE_SIZE
 import com.example.news.util.const.Constants.SEARCH_NEWS_TIME_DELAY
+import com.example.news.util.extensions.launchViewLifecycleScope
 import com.example.news.util.extensions.onQueryTextChanged
 import com.example.news.util.extensions.slideUpBottomNavigationBar
 import com.example.news.viewmodels.BreakingNewsViewModel
@@ -98,7 +99,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
     }
 
     private fun setupViewModelCallbacks() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchViewLifecycleScope {
             viewModel.errorAction.collect { response ->
                 response.message?.let { message ->
                     Toast.makeText(
@@ -123,7 +124,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchViewLifecycleScope {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.breakingNewsState.collect { response ->
                     when (response) {
@@ -150,7 +151,7 @@ class BreakingNewsFragment : BaseFragment(R.layout.fragment_breaking_news) {
                 }
             }
         }
-        viewLifecycleOwner.lifecycleScope.launch {
+        launchViewLifecycleScope {
             viewModel.searchNewsState.collect { response ->
                 when (response) {
                     is Resource.Loading -> {

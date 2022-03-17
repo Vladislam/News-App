@@ -15,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentSettingsBinding
 import com.example.news.ui.fragments.base.BaseFragment
+import com.example.news.util.extensions.launchViewLifecycleScope
+import com.example.news.util.extensions.throttleClicks
 import com.example.news.util.mappers.CountryMapper
 import com.example.news.viewmodels.SettingsViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -29,8 +31,6 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     private val binding get() = _binding!!
 
     private val viewModel: SettingsViewModel by viewModels()
-
-    private val countryMapper by lazy { CountryMapper(resources) }
 
     override fun setup(savedInstanceState: Bundle?) {
         setupViewModelCallbacks()
@@ -59,42 +59,22 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
     private fun setupButtons() {
         binding.apply {
-            buttonChangeCountry.setOnClickListener {
+            buttonChangeCountry.throttleClicks(lifecycleScope) {
                 createChangingCountryDialog()
             }
 
-            buttonChangeDarkTheme.setOnClickListener {
-                val action = SettingsFragmentDirections.actionSettingsFragmentToThemesChoiceFragment()
+            buttonChangeDarkTheme.throttleClicks(lifecycleScope) {
+                val action =
+                    SettingsFragmentDirections.actionSettingsFragmentToThemesChoiceFragment()
                 findNavController().navigate(action)
             }
         }
     }
 
     private fun createChangingCountryDialog() {
-        val container = FrameLayout(requireActivity())
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.marginStart = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-        params.marginEnd = resources.getDimensionPixelSize(R.dimen.dialog_margin)
-        val input = layoutInflater.inflate(R.layout.spinner_view_item, container, false)
-        val spinnerCountries =
-            input.findViewById<AutoCompleteTextView>(R.id.spinnerCountries)
-        spinnerCountries.setAdapter(
-            ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                countryMapper.countryNames,
-            )
-        )
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.preferencesFlow.collect { preferences ->
-                spinnerCountries.setText(countryMapper.mapCodeToName(preferences.countryCode))
-            }
-        }
-        input.layoutParams = params
-        container.addView(input)
+        val countryMapper = CountryMapper(resources)
+
+        val (container, spinnerCountries) = createExposedDropdownMenu(countryMapper)
 
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.enter_new_country))
@@ -108,6 +88,37 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             .create()
             .show()
 
+    }
+
+    private fun createExposedDropdownMenu(countryMapper: CountryMapper): Pair<View, AutoCompleteTextView> {
+        val container = FrameLayout(requireActivity())
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply {
+            marginStart = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+            marginEnd = resources.getDimensionPixelSize(R.dimen.dialog_margin)
+        }
+        val input = layoutInflater.inflate(R.layout.spinner_view_item, container, false)
+            .apply { layoutParams = params }
+        val spinnerCountries =
+            input.findViewById<AutoCompleteTextView>(R.id.spinnerCountries).apply {
+                setAdapter(
+                    ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        countryMapper.countryNames,
+                    )
+                )
+            }
+        container.addView(input)
+        launchViewLifecycleScope {
+            viewModel.preferencesFlow.collect { preferences ->
+                spinnerCountries.setText(countryMapper.mapCodeToName(preferences.countryCode))
+            }
+        }
+
+        return Pair(container, spinnerCountries)
     }
 
     override fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): View {

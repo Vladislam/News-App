@@ -1,8 +1,11 @@
 package com.example.news.util.extensions
 
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.news.ui.activities.NewsActivity
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 inline fun Fragment.showSnackBarWithAction(
     title: String,
@@ -21,3 +24,6 @@ fun Fragment.slideUpBottomNavigationBar() =
 
 fun Fragment.slideDownBottomNavigationBar() =
     (requireActivity() as NewsActivity).slideDownBottomNavigationBar()
+
+fun Fragment.launchViewLifecycleScope(action: suspend CoroutineScope.() -> Unit) =
+    viewLifecycleOwner.lifecycleScope.launch { action.invoke(this) }
